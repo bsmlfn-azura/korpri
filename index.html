@@ -1,0 +1,1212 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Korpri Maju Terus</title>
+    <style>
+        /* --- CSS VARIABLES & RESET --- */
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --secondary: #64748b;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+            --excel: #107c41;
+            --bg: #f1f5f9;
+            --surface: #ffffff;
+            --border: #e2e8f0;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
+        body { background-color: var(--bg); color: var(--text-main); line-height: 1.4; min-height: 100vh; display: flex; flex-direction: column; }
+
+        /* --- LAYOUT UTAMA --- */
+        header { background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
+        h1 { font-size: 1.25rem; color: var(--primary-dark); font-weight: 700; }
+        nav button { background: transparent; border: none; padding: 0.5rem 1rem; cursor: pointer; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid transparent; transition: all 0.2s; }
+        nav button.active { color: var(--primary); border-bottom-color: var(--primary); }
+        main { flex: 1; padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .section-view { display: none; }
+        .section-view.active { display: block; animation: fadeIn 0.3s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- FORM & CARD STYLES --- */
+        .card { background: var(--surface); border-radius: 8px; padding: 2rem; box-shadow: var(--shadow); margin-bottom: 2rem; }
+        .card h4 { color: var(--primary); margin-top: 1.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
+        .card h4:first-child { margin-top: 0; }
+        
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
+        .form-group { margin-bottom: 1rem; }
+        label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: var(--text-muted); }
+        input, select, textarea { width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s; }
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        
+        /* Style Rincian Golongan */
+        .rincian-container {
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            background-color: #f8fafc;
+        }
+        .rincian-header, .rincian-row {
+            display: grid;
+            grid-template-columns: 100px 1fr 1fr; /* Gol, Jumlah, Nominal */
+            gap: 10px;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .rincian-header { margin-bottom: 5px; }
+        .rincian-row:last-child { margin-bottom: 0; }
+        .rincian-label { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 5px; font-weight: bold;}
+        
+        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.6rem 1.2rem; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; transition: background 0.2s; gap: 0.5rem; }
+        .btn-primary { background: var(--primary); color: white; }
+        .btn-primary:hover { background: var(--primary-dark); }
+        .btn-danger { background: var(--danger); color: white; }
+        .btn-danger:hover { background: #dc2626; }
+        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
+        .btn-outline:hover { background: var(--bg); }
+        .btn-warning { background: var(--warning); color: white; }
+        .btn-warning:hover { background: #d97706; }
+        
+        .btn-excel { background: var(--excel); color: white; }
+        .btn-excel:hover { background: #0c5e31; }
+
+        .logo-uploader { border: 2px dashed var(--border); padding: 1rem; text-align: center; border-radius: 8px; cursor: pointer; margin-bottom: 1rem; }
+        #logo-preview { max-height: 80px; display: block; margin: 0 auto; }
+
+        /* --- TABLE STYLES --- */
+        .table-responsive { overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
+        th { background-color: var(--bg); font-weight: 600; color: var(--text-muted); }
+        tr:hover { background-color: #f8fafc; }
+        .action-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+        /* --- MODAL PREVIEW --- */
+        #preview-modal {
+            display: none;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 9999;
+            align-items: center;
+            justify-content: center;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            max-width: 800px;
+            width: 100%;
+            position: relative;
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
+            transition: max-width 0.3s;
+        }
+
+        .modal-content.size-a6 { max-width: 800px; } 
+
+        .modal-actions {
+            margin-top: 20px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            border-top: 1px solid var(--border);
+            padding-top: 15px;
+        }
+
+        .paper-simulation {
+            border: 1px solid #ddd;
+            background: white;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            margin: 0 auto;
+            width: 100%; 
+            min-height: 280px; 
+            overflow: hidden;
+        }
+
+        /* --- STYLES KHUSUS KWITANSI (CUSTOM SIZE) --- */
+        .receipt-box {
+            border: 2px solid #000;
+            padding: 10px; 
+            width: 100%;
+            height: 335px;
+            display: flex;
+            flex-direction: column;
+            background: #fff;
+            color: #000;
+            font-size: 7pt; 
+            -webkit-print-color-adjust: exact; 
+            print-color-adjust: exact; 
+        }
+        .receipt-header { display: flex; align-items: center; border-bottom: 2px double #000; padding-bottom: 5px; margin-bottom: 8px; }
+        .receipt-logo-area { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; margin-right: 8px;}
+        .receipt-logo { max-width: 100%; max-height: 100%; object-fit: contain; }
+        .receipt-title-area { flex: 1; text-align: center; }
+        .receipt-title { font-size: 9pt; font-weight: bold; text-transform: uppercase; line-height: 1.1; }
+        .receipt-subtitle { font-size: 9pt; }
+
+        .receipt-content-row { display: flex; flex: 1; gap: 10px; margin-bottom: 8px; }
+        .receipt-details { flex: 2; display: flex; flex-direction: column; justify-content: start; }
+        .receipt-amount-side { flex: 1; border: 1px solid #000; padding: 5px; display: flex; flex-direction: column; justify-content: center; text-align: center; background: #f9f9f9; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+        .receipt-row { display: flex; margin-bottom: 2px; align-items: baseline; }
+        .receipt-label { width: 70px; font-weight: bold; font-size: 7pt; white-space: nowrap; }
+        .receipt-separator { width: 5px; }
+        .receipt-value { flex: 1; border-bottom: 1px dotted #000; text-align: right; font-size: 7pt; padding-right: 2px;}
+
+        /* Style Khusus Tabel Rincian di Kwitansi */
+        .receipt-breakdown {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 5px;
+            font-size: 6.5pt; 
+        }
+        .receipt-breakdown th { text-align: center; border-bottom: 1px solid #000; padding: 2px; background: #eee; }
+        .receipt-breakdown td { padding: 1px 2px; border-bottom: 1px dashed #ccc; }
+        .breakdown-col-center { text-align: center; }
+        .breakdown-col-right { text-align: right; }
+
+        .receipt-amount-text { font-size: 6.5pt; font-style: italic; margin-bottom: 2px; line-height: 1.1; }
+        .receipt-amount-num { font-size: 9pt; font-weight: bold; color: #000; }
+        .receipt-amount-num-half { font-size: 12pt; font-weight: bold; color: #d00; } 
+
+        .receipt-footer { display: flex; justify-content: space-between; border-top: 1px solid #000; padding-top: 5px; margin-top: auto; }
+        .sign-area { text-align: center; width: 45%; }
+        .sign-space { height: 25px; } 
+
+        /* --- STYLES KHUSUS LAPORAN --- */
+        .report-header { text-align: center; margin-bottom: 20px; }
+        .report-table { width: 100%; border-collapse: collapse; font-size: 11pt; }
+        .report-table th, .report-table td { border: 1px solid #000; padding: 8px; text-align: left; }
+        .report-table th { background-color: #f0f0f0; text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+        /* --- TOAST --- */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10001; }
+        .toast { background: var(--text-main); color: white; padding: 12px 24px; border-radius: 6px; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards; min-width: 250px; }
+        .toast.success { border-left: 4px solid var(--success); }
+        .toast.error { border-left: 4px solid var(--danger); }
+        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; pointer-events: none; } }
+
+        /* --- PRINT STYLES --- */
+        @media print {
+            body > *:not(#printable-area) { display: none !important; }
+            #printable-area {
+                display: block !important;
+                position: absolute;
+                top: 0; left: 0;
+                width: 100%; height: 100%;
+                margin: 0; padding: 0;
+                overflow: hidden;
+                background: white;
+            }
+            body, html { overflow: hidden; width: 100%; height: 100%; }
+        }
+
+        @media print {
+            body.mode-print-report @page { size: A4 portrait; margin: 10mm; }
+            body.mode-print-receipt @page { size: 215mm 110mm; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Aplikasi Iuran Korpri v.1.0</h1>
+        <nav>
+            <button id="nav-input" class="active" onclick="switchTab('input')">Input Data</button>
+            <button id="nav-report" onclick="switchTab('report')">Laporan Data</button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- HALAMAN INPUT -->
+        <section id="input-section" class="section-view active">
+            
+            <!-- PENGATURAN UMUM -->
+            <div class="card">
+                <h4>Pengaturan Tampilan Cetak</h4>
+                <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label>Upload Logo Instansi</label>
+                            <div class="logo-uploader" onclick="document.getElementById('logo-input').click()">
+                                <input type="file" id="logo-input" accept="image/*" hidden onchange="handleLogoUpload(this)">
+                                <span id="upload-text">Klik untuk upload logo</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div style="flex: 0 0 100px; text-align: center;">
+                        <img id="logo-preview" src="" alt="Logo Preview" style="display:none; max-width: 100%; border: 1px solid #ddd; padding: 5px;">
+                        <p style="font-size: 0.8rem; margin-top: 5px;">Preview</p>
+                    </div>
+                    <div style="flex: 1;">
+                        <div class="form-group">
+                            <label>Nama Instansi (Header)</label>
+                            <input type="text" id="setting-instansi" value="isikan nama organisasi" onchange="saveSettings()">
+                        </div>
+                        <div class="form-group">
+                            <label>Alamat / OPD Lengkap</label>
+                            <input type="text" id="setting-alamat" value="isikan alamat" onchange="saveSettings()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PENGATURAN NOMOR OTOMATIS -->
+                <h4>Pengaturan Nomor Otomatis</h4>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label>Akhiran</label>
+                        <input type="text" id="setting-suffix" value="/KORP/BKL" placeholder="Contoh: /KORP/BKL" onchange="saveSettings()">
+                        <small style="color: var(--text-muted)">Teks di bagian paling belakang nomor.</small>
+                    </div>
+                    <div class="form-group">
+                        <label>Pemisah (Separator)</label>
+                        <select id="setting-separator" onchange="saveSettings()">
+                            <option value="/">/ (Slash)</option>
+                            <option value=".">. (Titik)</option>
+                            <option value="-">- (Strip)</option>
+                            <option value="">Tanpa Pemisah</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Reset Urutan Bulan Ini (Manual)</label>
+                        <input type="number" id="setting-counter-manual" placeholder="Otomatis jika kosong" onchange="saveSettings()" min="1">
+                        <small style="color: var(--text-muted)">Isi angka untuk memaksa mulai dari urutan tertentu. Kosongkan untuk lanjut otomatis.</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FORM INPUT -->
+            <div class="card">
+                <h3 id="form-title">Input Data Baru</h3>
+                <form id="kwitansi-form" onsubmit="handleFormSubmit(event)">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Tanggal Cetak</label>
+                            <input type="date" id="tgl-cetak" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Tanggal Setor (Urut No. Kwitansi)</label>
+                            <input type="date" id="tgl-setor" onchange="generateNextNumber()">
+                            <small style="color: var(--text-muted)">Jika diisi, tanggal ini akan digunakan untuk urutan nomor kwitansi.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nomor Kwitansi (Otomatis)</label>
+                            <input type="text" id="no-kwitansi" readonly style="background-color: #e2e8f0; font-family: monospace;">
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Nama Penyetor</label>
+                            <input type="text" id="nama-penyetor" placeholder="Nama Lengkap" required>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label>Untuk Periode (Bulan)</label>
+                            <select id="periode-bulan" required>
+                                <option value="">Pilih Bulan</option>
+                                <option value="Januari">Januari</option>
+                                <option value="Februari">Februari</option>
+                                <option value="Maret">Maret</option>
+                                <option value="April">April</option>
+                                <option value="Mei">Mei</option>
+                                <option value="Juni">Juni</option>
+                                <option value="Juli">Juli</option>
+                                <option value="Agustus">Agustus</option>
+                                <option value="September">September</option>
+                                <option value="Oktober">Oktober</option>
+                                <option value="November">November</option>
+                                <option value="Desember">Desember</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Tahun</label>
+                            <select id="periode-tahun" required>
+                                <!-- Diisi via JS -->
+                            </select>
+                        </div>
+
+                        <!-- INPUTAN RINCIAN GOLONGAN -->
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Rincian Golongan</label>
+                            <div class="rincian-container" id="rincian-inputs">
+                                <div class="rincian-header">
+                                    <div class="rincian-label">Gol.</div>
+                                    <div class="rincian-label">Jml Org</div>
+                                    <div class="rincian-label">Nominal/Orang</div>
+                                </div>
+                                <!-- Baris 1 -->
+                                <div class="rincian-row">
+                                    <select class="input-golongan">
+                                        <option value="1">Gol 1</option>
+                                        <!--<option value="2">Gol 2</option>-->
+                                        <!--<option value="3">Gol 3</option>-->
+                                        <!--<option value="4">Gol 4</option>-->
+                                    </select>
+                                    <input type="number" class="input-jumlah" placeholder="0" min="0" oninput="calculateTotal()">
+                                    <input type="number" class="input-nominal" placeholder="wajib diisi nominal per golongan" min="0" oninput="calculateTotal()">
+                                </div>
+                                <!-- Baris 2 -->
+                                <div class="rincian-row">
+                                    <select class="input-golongan">
+                                        <option value="2">Gol 2</option>
+                                        <!--<option value="1">Gol 1</option>-->
+                                        <!--<option value="3">Gol 3</option>-->
+                                        <!--<option value="4">Gol 4</option>-->
+                                    </select>
+                                    <input type="number" class="input-jumlah" placeholder="0" min="0" oninput="calculateTotal()">
+                                    <input type="number" class="input-nominal" placeholder="wajib diisi nominal per golongan" min="0" oninput="calculateTotal()">
+                                </div>
+                                <!-- Baris 3 -->
+                                <div class="rincian-row">
+                                    <select class="input-golongan">
+                                        <option value="3">Gol 3</option>
+                                        <!--<option value="1">Gol 1</option>-->
+                                        <!--<option value="2">Gol 2</option>-->
+                                        <!--<option value="4">Gol 4</option>-->
+                                    </select>
+                                    <input type="number" class="input-jumlah" placeholder="0" min="0" oninput="calculateTotal()">
+                                    <input type="number" class="input-nominal" placeholder="wajib diisi nominal per golongan" min="0" oninput="calculateTotal()">
+                                </div>
+                                <!-- Baris 4 -->
+                                <div class="rincian-row">
+                                    <select class="input-golongan">
+                                        <option value="4">Gol 4</option>
+                                        <!--<option value="1">Gol 1</option>-->
+                                        <!--<option value="2">Gol 2</option>-->
+                                        <!--<option value="3">Gol 3</option>-->
+                                    </select>
+                                    <input type="number" class="input-jumlah" placeholder="0" min="0" oninput="calculateTotal()">
+                                    <input type="number" class="input-nominal" placeholder="wajib diisi nominal per golongan" min="0" oninput="calculateTotal()">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Total Nominal Bruto (Auto)</label>
+                            <input type="number" id="nominal" placeholder="0" required readonly style="background-color: #e2e8f0; font-weight: bold;">
+                            <small style="color: var(--text-muted)">Dihitung dari rincian golongan.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Total Bayar (50% Auto)</label>
+                            <input type="number" id="total-bayar" placeholder="0" required readonly style="background-color: #dcfce7; font-weight: bold; color: #166534; border-color: #86efac;">
+                            <small style="color: var(--text-muted)">Otomatis 50% dari Total Nominal Bruto.</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label>OPD / Instansi</label>
+                            <input type="text" id="opd-select" placeholder="Ketik nama OPD..." required>
+                        </div>
+
+                        <div class="form-group">
+                            <label>Nama Penerima (Dropdown)</label>
+                            <select id="penerima-select" required>
+                                <option value="">Pilih Penerima</option>
+                                <option value="Dewi Aniza">Dewi Aniza</option>
+                                <option value="Dita Ayuningtyas">Dita Ayuningtyas</option>
+                                <option value="Rusdi Mardiyanto">Rusdi Mardiyanto</option>
+                                <option value="Samsuri">Samsuri</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group" style="grid-column: 1 / -1;">
+                            <label>Catatan / Keterangan</label>
+                            <textarea id="catatan" rows="2" placeholder="Contoh: Setoran Bulanan..."></textarea>
+                        </div>
+                    </div>
+
+                    <div style="margin-top: 1.5rem; text-align: right;">
+                        <button type="button" class="btn btn-outline" onclick="resetForm()">Reset</button>
+                        <button type="submit" class="btn btn-primary" id="btn-submit">
+                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
+                            <span id="btn-submit-text">Simpan & Cetak</span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- HALAMAN LAPORAN -->
+        <section id="report-section" class="section-view">
+            <div class="card">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
+                    <h3>Laporan Data Setoran</h3>
+                    <div class="action-buttons">
+                        <button onclick="exportToExcel()" class="btn btn-excel">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                            Ekspor Excel
+                        </button>
+                        <button onclick="printReportTable()" class="btn btn-outline">
+                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
+                            Cetak Laporan
+                        </button>
+                    </div>
+                </div>
+
+                <div class="table-responsive">
+                    <table id="report-table">
+                        <thead>
+                            <tr>
+                                <th>No. Kwitansi</th>
+                                <th>Periode</th>
+                                <th>Tgl Cetak</th>
+                                <th>Tgl Setor</th>
+                                <th>Penyetor</th>
+                                <th>Penerima</th>
+                                <th>OPD</th>
+                                <th>Total Bruto</th>
+                                <th>Total Bayar (50%)</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td colspan="11" style="text-align: center; color: var(--text-muted);">Belum ada data.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- MODAL PREVIEW POPUP -->
+    <div id="preview-modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 15px; color: var(--primary);">Preview Cetak</h3>
+            
+            <div id="modal-preview-body" class="paper-simulation"></div>
+
+            <div class="modal-actions">
+                <button onclick="closePreview()" class="btn btn-outline">Tutup</button>
+                <button onclick="executePrint()" class="btn btn-primary">Cetak / Simpan PDF</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="printable-area" style="display: none;"></div>
+    <div id="toast-container"></div>
+
+        <script>
+        // --- STATE MANAGEMENT ---
+        let db = []; // Global variable penampung data dari Google Sheet
+        
+        // URL Google Apps Script (Ganti dengan URL Web App Anda tadi)
+        const API_URL = 'https://script.google.com/macros/s/AKfycbyZBTSgQSQTukbGhCEuGZcIUv1KnvCANOUDWoIBzfQUXLrQW4-kIkRHYaD6yQtHtFhw/exec'; 
+
+        // Ambil data appSettings tetap dari LocalStorage
+        let appSettings = JSON.parse(localStorage.getItem('appSettings')) || {
+            logo: null,
+            instansi: 'PEMERINTAH KOTA CONTOH',
+            alamat: 'DINAS CONTOH INDONESIA',
+            numberSuffix: '/KWJ',
+            numberSeparator: '/',
+            counterManual: '' 
+        };
+
+        let currentEditId = null;
+
+        // --- HELPER: FORMAT TANGGAL DD-MM-YYYY ---
+        function formatDateIndo(dateString) {
+            if (!dateString) return '-';
+            const parts = dateString.split('-');
+            if (parts.length !== 3) return dateString;
+            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        }
+
+        // --- INIT ---
+        document.addEventListener('DOMContentLoaded', async () => {
+            loadSettings();
+            initDateFields();
+            // 1. Muat data dulu dari Google Sheet
+            await renderReportTable();
+            // 2. Hitung nomor otomatis setelah data masuk
+            generateNextNumber();
+        });
+
+        // --- NAVIGATION ---
+        function switchTab(tabName) {
+            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
+            document.getElementById(`nav-${tabName}`).classList.add('active');
+            document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
+            document.getElementById(`${tabName}-section`).classList.add('active');
+            if (tabName === 'report') renderReportTable();
+        }
+
+        // --- SETTINGS & LOGO (Tetap LocalStorage) ---
+        function loadSettings() {
+            document.getElementById('setting-instansi').value = appSettings.instansi;
+            document.getElementById('setting-alamat').value = appSettings.alamat;
+            document.getElementById('setting-suffix').value = appSettings.numberSuffix;
+            document.getElementById('setting-separator').value = appSettings.numberSeparator;
+            document.getElementById('setting-counter-manual').value = appSettings.counterManual;
+
+            if (appSettings.logo) {
+                const prev = document.getElementById('logo-preview');
+                prev.src = appSettings.logo;
+                prev.style.display = 'block';
+                document.getElementById('upload-text').innerText = "Ganti Logo";
+            }
+        }
+
+        function saveSettings() {
+            appSettings.instansi = document.getElementById('setting-instansi').value;
+            appSettings.alamat = document.getElementById('setting-alamat').value;
+            appSettings.numberSuffix = document.getElementById('setting-suffix').value;
+            appSettings.numberSeparator = document.getElementById('setting-separator').value;
+            appSettings.counterManual = document.getElementById('setting-counter-manual').value;
+            
+            localStorage.setItem('appSettings', JSON.stringify(appSettings));
+            generateNextNumber();
+            showToast("Pengaturan disimpan", "success");
+        }
+
+        function handleLogoUpload(input) {
+            if (input.files && input.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    appSettings.logo = e.target.result;
+                    localStorage.setItem('appSettings', JSON.stringify(appSettings));
+                    loadSettings();
+                    showToast("Logo berhasil diupload", "success");
+                }
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        // --- FORM HELPERS ---
+        function initDateFields() {
+            document.getElementById('tgl-cetak').valueAsDate = new Date();
+            document.getElementById('tgl-setor').valueAsDate = new Date();
+            const yearSelect = document.getElementById('periode-tahun');
+            const currentYear = new Date().getFullYear();
+            for (let i = currentYear - 2; i <= currentYear + 5; i++) {
+                const opt = document.createElement('option');
+                opt.value = i;
+                opt.text = i;
+                if (i === currentYear) opt.selected = true;
+                yearSelect.appendChild(opt);
+            }
+        }
+
+        function formatCurrencyInput(input) {
+            // Helper kosong
+        }
+
+        function generateNextNumber() {
+            const dateVal = document.getElementById('tgl-setor').value || document.getElementById('tgl-cetak').value;
+            
+            if (!dateVal) return;
+            const dateObj = new Date(dateVal);
+            const year = dateObj.getFullYear();
+            const month = dateObj.getMonth() + 1; 
+            const prefix = `${year}${month.toString().padStart(2, '0')}`;
+            const separator = appSettings.numberSeparator || '';
+            const suffix = appSettings.numberSuffix || '';
+            let nextSeq = 1;
+            
+            // Gunakan db (sudah diambil dari Google Sheet)
+            const monthlyData = db.filter(item => item.no_kwitansi.startsWith(prefix));
+
+            const manualCounter = parseInt(appSettings.counterManual);
+            
+            if (!isNaN(manualCounter) && manualCounter > 0) {
+                nextSeq = manualCounter;
+            } else {
+                if (monthlyData.length > 0) {
+                    const sequences = monthlyData.map(d => {
+                        const parts = d.no_kwitansi.split(separator);
+                        if(parts.length >1) {
+                            return parseInt(parts[1]);
+                        }
+                        return 0;
+                    });
+                    const maxSeq = Math.max(...sequences);
+                    nextSeq = maxSeq + 1;
+                }
+            }
+
+            const seqStr = nextSeq.toString().padStart(4, '0');
+            const noKwitansi = `${prefix}${separator}${seqStr}${suffix}`;
+            document.getElementById('no-kwitansi').value = noKwitansi;
+        }
+
+        document.getElementById('tgl-setor').addEventListener('change', generateNextNumber);
+        document.getElementById('tgl-cetak').addEventListener('change', generateNextNumber);
+
+        function resetForm() {
+            document.getElementById('kwitansi-form').reset();
+            initDateFields();
+            generateNextNumber();
+            
+            currentEditId = null;
+            document.getElementById('form-title').innerText = "Buat Kwitansi Baru (215x110)";
+            document.getElementById('btn-submit-text').innerText = "Simpan & Preview";
+            document.getElementById('btn-submit').classList.remove('btn-warning');
+            document.getElementById('btn-submit').classList.add('btn-primary');
+
+            const selects = document.querySelectorAll('.input-golongan');
+            selects.forEach((s, index) => { s.selectedIndex = index; });
+            document.querySelectorAll('.input-jumlah, .input-nominal').forEach(i => i.value = '');
+            document.getElementById('nominal').value = '';
+            document.getElementById('total-bayar').value = '';
+        }
+
+        function calculateTotal() {
+            let total = 0;
+            const rows = document.querySelectorAll('.rincian-row');
+            
+            rows.forEach(row => {
+                const inputJumlah = row.querySelector('.input-jumlah');
+                if (inputJumlah) { 
+                    const jumlah = parseFloat(inputJumlah.value) || 0;
+                    const nominal = parseFloat(row.querySelector('.input-nominal').value) || 0;
+                    total += (jumlah * nominal);
+                }
+            });
+
+            const totalBayar = total * 0.5;
+
+            document.getElementById('nominal').value = total;
+            document.getElementById('total-bayar').value = totalBayar;
+        }
+
+        function terbilang(nilai) {
+            nilai = Math.abs(nilai);
+            var simpanNilaiBagi = 0;
+            var huruf = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+            var temp = "";
+            if (nilai < 12) {
+                temp = " " + huruf[nilai];
+            } else if (nilai < 20) {
+                temp = terbilang(nilai - 10) + " Belas";
+            } else if (nilai < 100) {
+                simpanNilaiBagi = Math.floor(nilai / 10);
+                temp = terbilang(simpanNilaiBagi) + " Puluh" + terbilang(nilai % 10);
+            } else if (nilai < 200) {
+                temp = " Seratus" + terbilang(nilai - 100);
+            } else if (nilai < 1000) {
+                simpanNilaiBagi = Math.floor(nilai / 100);
+                temp = terbilang(simpanNilaiBagi) + " Ratus" + terbilang(nilai % 100);
+            } else if (nilai < 2000) {
+                temp = " Seribu" + terbilang(nilai - 1000);
+            } else if (nilai < 1000000) {
+                simpanNilaiBagi = Math.floor(nilai / 1000);
+                temp = terbilang(simpanNilaiBagi) + " Ribu" + terbilang(nilai % 1000);
+            } else if (nilai < 1000000000) {
+                simpanNilaiBagi = Math.floor(nilai / 1000000);
+                temp = terbilang(simpanNilaiBagi) + " Juta" + terbilang(nilai % 1000000);
+            } else if (nilai < 1000000000000) {
+                simpanNilaiBagi = Math.floor(nilai / 1000000000);
+                temp = terbilang(simpanNilaiBagi) + " Miliar" + terbilang(nilai % 1000000000);
+            }
+            return temp;
+        }
+
+        // --- FITUR EDIT ---
+        function openEditMode(id) {
+            const item = db.find(d => d.id == id);
+            if(!item) return;
+
+            currentEditId = id;
+
+            switchTab('input');
+            document.getElementById('form-title').innerText = "Edit Kwitansi (215x110)";
+            document.getElementById('btn-submit-text').innerText = "Update & Preview";
+            document.getElementById('btn-submit').classList.remove('btn-primary');
+            document.getElementById('btn-submit').classList.add('btn-warning');
+
+            // Mapping kolom DB ke ID HTML
+            document.getElementById('no-kwitansi').value = item.no_kwitansi;
+            document.getElementById('tgl-cetak').value = item.tgl_cetak;
+            document.getElementById('tgl-setor').value = item.tgl_setor;
+            document.getElementById('nama-penyetor').value = item.nama_penyetor;
+            document.getElementById('periode-bulan').value = item.bulan;
+            document.getElementById('periode-tahun').value = item.tahun;
+            document.getElementById('nominal').value = item.nominal;
+            document.getElementById('total-bayar').value = item.total_bayar;
+            document.getElementById('opd-select').value = item.opd;
+            document.getElementById('penerima-select').value = item.penerima;
+            document.getElementById('catatan').value = item.catatan;
+
+            // Parsing rincian JSON dari DB
+            if (item.rincian) {
+                const rincianData = JSON.parse(item.rincian);
+                const selects = document.querySelectorAll('.input-golongan');
+                const rows = document.querySelectorAll('.rincian-row');
+                
+                // Reset input
+                rows.forEach(row => {
+                    row.querySelector('.input-jumlah').value = '';
+                    row.querySelector('.input-nominal').value = '';
+                });
+
+                if (rincianData && rincianData.length > 0) {
+                    rincianData.forEach((r, idx) => {
+                        if (idx < 4) {
+                            const row = rows[idx];
+                            const golSelect = row.querySelector('.input-golongan');
+                            let optionFound = false;
+                            for(let i=0; i<golSelect.options.length; i++){
+                                if(golSelect.options[i].value === r.gol){
+                                    golSelect.selectedIndex = i;
+                                    optionFound = true;
+                                    break;
+                                }
+                            }
+                            row.querySelector('.input-jumlah').value = r.jumlah;
+                            row.querySelector('.input-nominal').value = r.nominal;
+                        }
+                    });
+                }
+            }
+
+            showToast("Mode Edit Aktif", "success");
+        }
+
+        // --- CORE ACTIONS (GAS KIRIM KE GOOGLE SHEETS) ---
+        async function handleFormSubmit(e) {
+            e.preventDefault();
+
+            // Ambil Data Rincian Golongan
+            const rincianData = [];
+            const rows = document.querySelectorAll('.rincian-row');
+            let hasDetails = false;
+
+            rows.forEach(row => {
+                const inputJumlah = row.querySelector('.input-jumlah');
+                if (inputJumlah) { 
+                    const gol = row.querySelector('.input-golongan').value;
+                    const jumlah = parseInt(inputJumlah.value) || 0;
+                    const nominal = parseInt(row.querySelector('.input-nominal').value) || 0;
+                    
+                    if (jumlah > 0 || nominal > 0) {
+                        rincianData.push({ gol, jumlah, nominal, total: jumlah * nominal });
+                        hasDetails = true;
+                    }
+                }
+            });
+
+            const nominalValue = parseFloat(document.getElementById('nominal').value) || 0;
+            const totalBayarValue = parseFloat(document.getElementById('total-bayar').value) || 0;
+
+            // Jika ID ada (Edit), kirim ID integer. Jika baru, kirim string "baru"
+            const idPayload = currentEditId ? currentEditId : "baru";
+
+            const data = {
+                action: 'simpan',
+                id: idPayload,
+                noKwitansi: document.getElementById('no-kwitansi').value,
+                tglCetak: document.getElementById('tgl-cetak').value,
+                tglSetor: document.getElementById('tgl-setor').value || document.getElementById('tgl-cetak').value,
+                namaPenyetor: document.getElementById('nama-penyetor').value,
+                bulan: document.getElementById('periode-bulan').value,
+                tahun: document.getElementById('periode-tahun').value,
+                nominal: nominalValue,
+                totalBayar: totalBayarValue,
+                opd: document.getElementById('opd-select').value,
+                penerima: document.getElementById('penerima-select').value,
+                catatan: document.getElementById('catatan').value,
+                rincian: hasDetails ? rincianData : [], 
+                instansiHeader: appSettings.instansi,
+                alamatHeader: appSettings.alamat,
+                logo: appSettings.logo
+            };
+            
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    redirect: "follow", // Penting untuk Google Script
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if(result.status === 'sukses') {
+                    showToast("Data berhasil disimpan ke Sheet", "success");
+                    
+                    if (currentEditId) {
+                        currentEditId = null;
+                        document.getElementById('form-title').innerText = "Buat Kwitansi Baru (215x110)";
+                        document.getElementById('btn-submit-text').innerText = "Simpan & Preview";
+                        document.getElementById('btn-submit').classList.remove('btn-warning');
+                        document.getElementById('btn-submit').classList.add('btn-primary');
+                    }
+                    
+                    // Refresh data dari Google Sheet
+                    await renderReportTable();
+                    showReceiptPreview(data);
+                    resetForm();
+                } else {
+                    showToast("Gagal: " + result.pesan, "error");
+                }
+
+            } catch (error) {
+                console.error("Error:", error);
+                showToast("Terjadi kesalahan koneksi ke Sheet", "error");
+            }
+            
+            // Reset manual counter
+        }
+
+        async function deleteData(id) {
+            if(confirm('Yakin ingin menghapus data ini?')) {
+                try {
+                    const response = await fetch(API_URL, {
+                        method: 'POST',
+                        redirect: "follow",
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ action: 'hapus', id: id })
+                    });
+                    const result = await response.json();
+                    
+                    if(result.status === 'sukses') {
+                        showToast("Data dihapus", "success");
+                        await renderReportTable();
+                    } else {
+                        showToast(result.pesan, "error");
+                    }
+                } catch (error) {
+                    console.error(error);
+                    showToast("Gagal menghapus", "error");
+                }
+            }
+        }
+
+        // --- REPORTING (AMBIL DARI GOOGLE SHEET) ---
+        async function renderReportTable() {
+            const tbody = document.querySelector('#report-table tbody');
+            tbody.innerHTML = '';
+            
+            try {
+                // Ambil data dari Google Script (Method GET via POST trick or direct GET)
+                // Google Apps Script doGet biasanya pake GET, tapi lebih aman pake POST redirect follow
+                // Namun doGet script di atas return JSON langsung.
+                
+                // Gunakan fetch biasa ke URL
+                const response = await fetch(API_URL);
+                const dataFromDB = await response.json();
+                
+                // Update global db variable
+                db = dataFromDB;
+
+                if (db.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 2rem; color: #64748b;">Belum ada data kwitansi.</td></tr>`;
+                    return;
+                }
+                
+                db.forEach(item => {
+                    // Parsing rincian JSON dari Sheet
+                    if (typeof item.rincian === 'string') {
+                        try {
+                            item.rincian = JSON.parse(item.rincian);
+                        } catch (e) {
+                            item.rincian = [];
+                        }
+                    }
+
+                    const tr = document.createElement('tr');
+                    const formattedNominal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.nominal);
+                    const formattedBayar = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.total_bayar);
+                    
+                    tr.innerHTML = `
+                        <td><span style="font-family: monospace; font-weight: bold;">${item.no_kwitansi}</span></td>
+                        <td>${item.bulan} ${item.tahun}</td>
+                        <td>${formatDateIndo(item.tgl_cetak)}</td>
+                        <td><span style="color: var(--primary); font-weight: bold;">${formatDateIndo(item.tgl_setor)}</span></td>
+                        <td>${item.nama_penyetor}</td>
+                        <td>${item.penerima}</td>
+                        <td>${item.opd}</td>
+                        <td>${formattedNominal}</td>
+                        <td style="font-weight:bold; color: var(--primary-dark);">${formattedBayar}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button onclick="openEditMode(${item.id})" class="btn btn-warning" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Edit</button>
+                                <button onclick="showReceiptPreviewById(${item.id})" class="btn btn-primary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Preview</button>
+                                <button onclick="deleteData(${item.id})" class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Hapus</button>
+                            </div>
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error("Gagal mengambil data:", error);
+                tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; color: red;">Gagal Mengambil Data dari Sheet</td></tr>`;
+            }
+        }
+
+        // --- EXPORT TO EXCEL ---
+        function exportToExcel() {
+            if (db.length === 0) {
+                showToast("Tidak ada data untuk diekspor", "error");
+                return;
+            }
+
+            const sortedDb = [...db].sort((a, b) => b.id - a.id);
+
+            let table = `<table border="1" style="border-collapse: collapse; width: 100%;">`;
+            table += `<tr><th colspan="10" style="text-align:center; font-size: 16px; font-weight: bold;">LAPORAN SETORAN</th></tr>`;
+            table += `<tr><th colspan="10" style="text-align:center;">${appSettings.instansi}</th></tr>`;
+            table += `<tr><td colspan="10" style="text-align:center;">Tanggal Export: ${new Date().toLocaleDateString('id-ID')}</td></tr>`;
+            table += `<tr><td colspan="10">&nbsp;</td></tr>`; 
+
+            table += `<thead>
+                <tr style="background-color: #f0f0f0;">
+                    <th>No. Kwitansi</th>
+                    <th>Periode</th>
+                    <th>Tgl Cetak</th>
+                    <th>Tgl Setor</th>
+                    <th>Penyetor</th>
+                    <th>Penerima</th>
+                    <th>OPD</th>
+                    <th>Total Bruto</th>
+                    <th>Total Bayar (50%)</th>
+                </tr>
+            </thead>`;
+
+            table += "<tbody>";
+            sortedDb.forEach(item => {
+                const formattedNominal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.nominal);
+                const formattedBayar = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.total_bayar);
+                
+                table += `
+                    <tr>
+                        <td style="mso-number-format:'\@'">${item.no_kwitansi}</td>
+                        <td>${item.bulan} ${item.tahun}</td>
+                        <td>${formatDateIndo(item.tgl_cetak)}</td>
+                        <td>${formatDateIndo(item.tgl_setor)}</td>
+                        <td>${item.nama_penyetor}</td>
+                        <td>${item.penerima}</td>
+                        <td>${item.opd}</td>
+                        <td>${formattedNominal}</td>
+                        <td>${formattedBayar}</td>
+                    </tr>
+                `;
+            });
+            table += "</tbody></table>";
+
+            const blob = new Blob([table], { type: 'application/vnd.ms-excel' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Laporan_Setoran_${new Date().toISOString().slice(0,10)}.xls`; 
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+        }
+
+        // --- PREVIEW & PRINT LOGIC ---
+
+        function showReceiptPreviewById(id) {
+            // Cari di variable global 'db'
+            const item = db.find(d => d.id === id);
+            if(item) {
+                // Mapping nama kolom DB ke nama properti JS
+                const jsItem = {
+                    id: item.id,
+                    noKwitansi: item.no_kwitansi,
+                    tglCetak: item.tgl_cetak,
+                    tglSetor: item.tgl_setor,
+                    namaPenyetor: item.nama_penyetor,
+                    bulan: item.bulan,
+                    tahun: item.tahun,
+                    nominal: item.nominal,
+                    totalBayar: item.total_bayar,
+                    opd: item.opd,
+                    penerima: item.penerima,
+                    catatan: item.catatan,
+                    rincian: item.rincian ? JSON.parse(item.rincian) : [],
+                    instansiHeader: appSettings.instansi,
+                    alamatHeader: appSettings.alamat,
+                    logo: appSettings.logo
+                };
+                showReceiptPreview(jsItem);
+            }
+        }
+
+        function showReceiptPreview(item) {
+            let rincianHtml = '';
+            if (item.rincian && item.rincian.length > 0) {
+                let rows = '';
+                item.rincian.forEach(r => {
+                    const nominalFmt = new Intl.NumberFormat('id-ID').format(r.nominal);
+                    const totalFmt = new Intl.NumberFormat('id-ID').format(r.total);
+                    rows += `
+                        <tr>
+                            <td>${r.gol}</td>
+                            <td class="breakdown-col-center">${r.jumlah}</td>
+                            <td class="breakdown-col-right">${nominalFmt}</td>
+                            <td class="breakdown-col-right">${totalFmt}</td>
+                        </tr>
+                    `;
+                });
+                rincianHtml = `
+                    <table class="receipt-breakdown">
+                        <thead>
+                            <tr>
+                                <th>Gol</th>
+                                <th>Jml</th>
+                                <th>Nominal</th>
+                                <th>Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                `;
+            }
+
+            const html = `
+                <div class="receipt-box">
+                    <div class="receipt-header">
+                        <div class="receipt-logo-area">
+                            ${item.logo ? `<img src="${item.logo}" class="receipt-logo">` : ''}
+                        </div>
+                        <div class="receipt-title-area">
+                            <div class="receipt-title">${item.instansiHeader}</div>
+                            <div class="receipt-subtitle">${item.alamatHeader}</div>
+                            <div style="text-decoration: underline; font-weight: bold; font-size: 9pt; margin-top: 2px;">KWITANSI</div>
+                        </div>
+                    </div>
+                    
+                    <div class="receipt-content-row">
+                        <div class="receipt-details">
+                            <div class="receipt-row"><div class="receipt-label">No. Kwitansi</div><div class="receipt-separator">:</div><div class="receipt-value">${item.noKwitansi}</div></div>
+                            <div class="receipt-row"><div class="receipt-label">Tanggal Setor</div><div class="receipt-separator">:</div><div class="receipt-value">${formatDateIndo(item.tglSetor)}</div></div>
+                            <div class="receipt-row"><div class="receipt-label">Telah Terima Dari</div><div class="receipt-separator">:</div><div class="receipt-value">${item.namaPenyetor}</div></div>
+                            <div class="receipt-row"><div class="receipt-label">Untuk Periode</div><div class="receipt-separator">:</div><div class="receipt-value">${item.bulan} ${item.tahun}</div></div>
+                            <div class="receipt-row"><div class="receipt-label">OPD / Instansi</div><div class="receipt-separator">:</div><div class="receipt-value">${item.opd}</div></div>
+                            
+                            ${rincianHtml}
+                            
+                            <div class="receipt-row" style="margin-top: 4px;"><div class="receipt-label">Keterangan</div><div class="receipt-separator">:</div><div class="receipt-value">${item.catatan || '-'}</div></div>
+                        </div>
+
+                        <div class="receipt-amount-side">
+                            <div style="font-weight:bold; font-size: 7pt; margin-bottom: 5px;">JUMLAH BRUTO</div>
+                            <div class="receipt-amount-num">Rp. ${new Intl.NumberFormat('id-ID').format(item.nominal)},-</div>
+                            
+                            <!-- GARIS PEMISAH -->
+                            <div style="margin: 4px 0; border-top: 1px solid #000; border-bottom: 1px dashed #000;"></div>
+                            
+                            <div style="font-size: 7pt; margin-bottom: 2px;">BAYAR (50%)</div>
+                            <div class="receipt-amount-num-half">Rp. ${new Intl.NumberFormat('id-ID').format(item.totalBayar)},-</div>
+                            
+                            <div style="margin-top: 3px; height: 1px; background: #000;"></div>
+                            <div class="receipt-amount-text"># ${terbilang(item.nominal)} Rupiah #</div>
+                        </div>
+                    </div>
+
+                    <div class="receipt-footer">
+                        <div class="sign-area"><div style="font-size:6pt;">Penyetor,</div><div class="sign-space"></div><div style="font-size:7pt; text-decoration: underline;">${item.namaPenyetor}</div></div>
+                        <div class="sign-area"><div style="font-size:6pt;">${formatDateIndo(item.tglCetak)}<br>Penerima,</div><div class="sign-space"></div><div style="font-size:7pt; text-decoration: underline;">${item.penerima}</div></div>
+                    </div>
+                </div>
+            `;
+            openPreviewModal(html, 'receipt');
+        }
+
+        function printReportTable() {
+            let rows = '';
+            if (db.length === 0) rows = '<tr><td colspan="11" style="text-align: center;">Tidak ada data.</td></tr>';
+            else {
+                const sortedDb = [...db].sort((a, b) => b.id - a.id);
+                sortedDb.forEach(item => {
+                    rows += `
+                        <tr>
+                            <td>${item.no_kwitansi}</td>
+                            <td>${item.bulan} ${item.tahun}</td>
+                            <td>${formatDateIndo(item.tgl_cetak)}</td>
+                            <td>${formatDateIndo(item.tgl_setor)}</td>
+                            <td>${item.nama_penyetor}</td>
+                            <td>${item.penerima}</td>
+                            <td>${item.opd}</td>
+                            <td>Rp ${new Intl.NumberFormat('id-ID').format(item.nominal)}</td>
+                            <td>Rp ${new Intl.NumberFormat('id-ID').format(item.total_bayar)}</td>
+                        </tr>
+                    `;
+                });
+            }
+
+            const html = `
+                <div class="report-container">
+                    <div class="report-header">
+                        <h2 style="text-decoration: underline;">LAPORAN SETORAN</h2>
+                        <h3>${appSettings.instansi}</h3>
+                        <p>Tanggal Cetak: ${new Date().toLocaleDateString('id-ID')}</p>
+                    </div>
+                    <table class="report-table">
+                        <thead>
+                            <tr>
+                                <th>No. Kwitansi</th>
+                                <th>Periode</th>
+                                <th>Tgl Cetak</th>
+                                <th>Tgl Setor</th>
+                                <th>Penyetor</th>
+                                <th>Penerima</th>
+                                <th>OPD</th>
+                                <th>Total Bruto</th>
+                                <th>Total Bayar (50%)</th>
+                            </tr>
+                        </thead>
+                        <tbody>${rows}</tbody>
+                    </table>
+                </div>
+            `;
+            openPreviewModal(html, 'report');
+        }
+
+        function openPreviewModal(htmlContent, type) {
+            const modalContent = document.querySelector('.modal-content');
+            const previewBody = document.getElementById('modal-preview-body');
+
+            previewBody.innerHTML = htmlContent;
+            document.getElementById('printable-area').innerHTML = htmlContent;
+            
+            document.body.classList.remove('mode-print-receipt', 'mode-print-report');
+            if (type === 'receipt') {
+                document.body.classList.add('mode-print-receipt');
+                modalContent.classList.add('size-a6');
+            } else {
+                document.body.classList.add('mode-print-report');
+                modalContent.classList.remove('size-a6');
+            }
+
+            document.getElementById('preview-modal').style.display = 'flex';
+        }
+
+        function closePreview() {
+            document.getElementById('preview-modal').style.display = 'none';
+        }
+
+        function executePrint() {
+            document.getElementById('preview-modal').style.display = 'none';
+            setTimeout(() => {
+                window.print();
+            },100);
+        }
+
+        function showToast(message, type = 'success') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerText = message;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3000);
+        }
+    </script>
+	
+</body>
+</html>
