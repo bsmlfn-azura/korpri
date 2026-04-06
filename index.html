@@ -928,6 +928,7 @@
             const logoUrl = "https://z-cdn-media.chatglm.cn/files/bdf8696e-2c15-43c9-931b-84464e66ee17.png?auth_key=1874763966-4804297fcfc1476295fa1111182667d4-0-e99fad2a346607c1c2efc95ed4a81203"; 
 
             return `
+                <!-- KOLOM ATAS (KOP & NOMOR) -->
                 <div class="col-top">
                     <div class="kop-container">
                         <div class="kop-row">
@@ -946,7 +947,9 @@
                     </div>
                 </div>
 
+                <!-- KOLOM TENGAH (Split Horizontal) -->
                 <div class="col-mid">
+                    <!-- Kiri: Data-Data -->
                     <div class="mid-left">
                         <div class="data-row">
                             <div class="data-label">Telah terima dari</div>
@@ -965,6 +968,7 @@
                             <div class="data-value">${formatDate(data.depositDate)}</div>
                         </div>
 
+                        <!-- Tabel Golongan -->
                         <table class="compact-table">
                             <thead><tr><th>Ket</th><th>Jml</th><th>Nom</th><th>Total</th></tr></thead>
                             <tbody>
@@ -978,18 +982,20 @@
                         <div class="terbilang-box">"${terbilang(data.bayar50)} Rupiah"</div>
                     </div>
 
+                    <!-- Kanan: Total Bayar -->
                     <div class="mid-right">
                         <div class="total-box">
                             <span class="total-label">TOTAL BAYAR</span>
                             <span class="total-amount">${formatRupiah(data.totalBayar)}</span>
                         </div>
                         <div class="total-box highlight-total">
-                            <span class="total-label">SETORAN 50%</span>
+                            <span class="total-label">BAYAR 50%</span>
                             <span class="total-amount">${formatRupiah(data.bayar50)}</span>
                         </div>
                     </div>
                 </div>
 
+                <!-- KOLOM BAWAH (Tanda Tangan) -->
                 <div class="col-bottom">
                     <div class="sig-col">
                         <div class="sig-date">${formatDate(data.printDate)}</div>
