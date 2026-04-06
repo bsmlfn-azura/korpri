@@ -202,6 +202,27 @@
         .summary-val { font-size: 1.5rem; font-weight: 800; color: var(--primary-color); }
         .summary-title { font-size: 0.8rem; color: #6b7280; text-transform: uppercase; font-weight: 600; }
 
+        /* Search Input Style */
+        .search-wrapper {
+            position: relative;
+            flex-grow: 1;
+            max-width: 400px;
+        }
+        .search-wrapper input {
+            width: 100%;
+            padding: 0.6rem 1rem 0.6rem 2.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.9rem;
+        }
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #9ca3af;
+            font-size: 1rem;
+        }
     </style>
 </head>
 <body>
@@ -216,7 +237,7 @@
             <button id="nav-report" onclick="switchTab('report')">📋 Laporan Data</button>
         </nav>
         <div style="margin-top: auto; font-size: 0.75rem; color: #9ca3af; text-align: center;">
-            v1.0.0 &copy; 2023
+            v1.1.0 &copy; 2023
         </div>
     </aside>
 
@@ -384,7 +405,14 @@
             <div class="card">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
                     <h2>Laporan Data Transaksi</h2>
-                    <button class="btn btn-secondary btn-sm" onclick="fetchDataFromSheet()">🔄 Refresh Data</button>
+                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; width: 100%; max-width: 600px; justify-content: flex-end;">
+                        <!-- FITUR PENCARIAN -->
+                        <div class="search-wrapper">
+                            <span class="search-icon">🔍</span>
+                            <input type="text" id="searchReport" placeholder="Cari Nama / No Kwitansi / OPD..." onkeyup="renderReport()">
+                        </div>
+                        <button class="btn btn-secondary btn-sm" onclick="fetchDataFromSheet()">🔄 Refresh</button>
+                    </div>
                 </div>
                 
                 <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px;">
@@ -396,6 +424,9 @@
                 <div id="emptyState" style="text-align: center; padding: 3rem; color: #9ca3af; display: none;">
                     <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
                     <p>Belum ada data transaksi.</p>
+                </div>
+                <div id="noResultState" style="text-align: center; padding: 2rem; color: #ef4444; display: none;">
+                    <p>Data tidak ditemukan dengan kata kunci tersebut.</p>
                 </div>
             </div>
         </section>
@@ -818,15 +849,42 @@
             }
         }
 
-        // --- REPORT LOGIC ---
+        // --- REPORT LOGIC (UPDATED WITH SEARCH) ---
         function renderReport() {
-            const tbody = document.getElementById('reportTableBody');
-            tbody.innerHTML = '';
-            if (transactions.length === 0) { document.getElementById('emptyState').style.display = 'block'; return; }
-            document.getElementById('emptyState').style.display = 'none';
+            // Ambil nilai dari input pencarian
+            const searchVal = document.getElementById('searchReport').value.toLowerCase();
             
-            // Sort descending
-            const sortedTx = [...transactions].sort((a,b) => new Date(b.printDate) - new Date(a.printDate));
+            const tbody = document.getElementById('reportTableBody');
+            const emptyState = document.getElementById('emptyState');
+            const noResultState = document.getElementById('noResultState');
+            
+            tbody.innerHTML = '';
+            
+            // Filter data berdasarkan keyword pencarian
+            const filteredData = transactions.filter(tx => {
+                const matchReceipt = tx.receiptNo && tx.receiptNo.toLowerCase().includes(searchVal);
+                const matchDepositor = tx.depositor && tx.depositor.toLowerCase().includes(searchVal);
+                const matchOpd = tx.opd && tx.opd.toLowerCase().includes(searchVal);
+                
+                return matchReceipt || matchDepositor || matchOpd;
+            });
+
+            if (transactions.length === 0) { 
+                emptyState.style.display = 'block';
+                noResultState.style.display = 'none';
+                return; 
+            } else {
+                emptyState.style.display = 'none';
+            }
+
+            if (filteredData.length === 0 && searchVal !== "") {
+                noResultState.style.display = 'block';
+            } else {
+                noResultState.style.display = 'none';
+            }
+            
+            // Sort descending berdasarkan tanggal
+            const sortedTx = [...filteredData].sort((a,b) => new Date(b.printDate) - new Date(a.printDate));
 
             sortedTx.forEach(tx => {
                 const tr = document.createElement('tr');
@@ -860,7 +918,7 @@
 
         function generateReceiptHTML(data) {
             const d = data.details;
-            // Menggunakan placeholder logo Korpri (Kemenpan RB logo generic jika tidak ada)
+            // Menggunakan placeholder logo Korpri
             const logoUrl = "https://z-cdn-media.chatglm.cn/files/bdf8696e-2c15-43c9-931b-84464e66ee17.png?auth_key=1874763966-4804297fcfc1476295fa1111182667d4-0-e99fad2a346607c1c2efc95ed4a81203"; 
 
             return `
