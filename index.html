@@ -3,1210 +3,1037 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Korpri Maju Terus</title>
+    <title>Sistem Kwitansi Korpri Bangkalan</title>
     <style>
-        /* --- CSS VARIABLES & RESET --- */
         :root {
-            --primary: #2563eb;
-            --primary-dark: #1e40af;
-            --secondary: #64748b;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --success: #10b981;
-            --excel: #107c41;
-            --bg: #f1f5f9;
-            --surface: #ffffff;
-            --border: #e2e8f0;
-            --text-main: #1e293b;
-            --text-muted: #64748b;
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            --primary-color: #2563eb; /* Korpri Blue */
+            --secondary-color: #1e40af;
+            --accent-color: #f59e0b;
+            --bg-color: #f3f4f6;
+            --surface-color: #ffffff;
+            --text-color: #1f2937;
+            --border-color: #e5e7eb;
+            --success-color: #10b981;
+            --danger-color: #ef4444;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
-        body { background-color: var(--bg); color: var(--text-main); line-height: 1.4; min-height: 100vh; display: flex; flex-direction: column; }
-
-        /* --- LAYOUT UTAMA --- */
-        header { background-color: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 2rem; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 2px 0 rgb(0 0 0 / 0.05); }
-        h1 { font-size: 1.25rem; color: var(--primary-dark); font-weight: 700; }
-        nav button { background: transparent; border: none; padding: 0.5rem 1rem; cursor: pointer; font-weight: 600; color: var(--text-muted); border-bottom: 2px solid transparent; transition: all 0.2s; }
-        nav button.active { color: var(--primary); border-bottom-color: var(--primary); }
-        main { flex: 1; padding: 2rem; max-width: 1200px; margin: 0 auto; width: 100%; }
-        .section-view { display: none; }
-        .section-view.active { display: block; animation: fadeIn 0.3s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* --- FORM & CARD STYLES --- */
-        .card { background: var(--surface); border-radius: 8px; padding: 2rem; box-shadow: var(--shadow); margin-bottom: 2rem; }
-        .card h4 { color: var(--primary); margin-top: 1.5rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--border); }
-        .card h4:first-child { margin-top: 0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
         
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem; }
-        .form-group { margin-bottom: 1rem; }
-        label { display: block; margin-bottom: 0.5rem; font-weight: 500; font-size: 0.9rem; color: var(--text-muted); }
-        input, select, textarea { width: 100%; padding: 0.6rem; border: 1px solid var(--border); border-radius: 6px; font-size: 1rem; transition: border-color 0.2s; }
-        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        
-        /* Style Rincian Golongan */
-        .rincian-container {
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            padding: 1rem;
-            background-color: #f8fafc;
-        }
-        .rincian-header, .rincian-row {
-            display: grid;
-            grid-template-columns: 100px 1fr 1fr; /* Gol, Jumlah, Nominal */
-            gap: 10px;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-        .rincian-header { margin-bottom: 5px; }
-        .rincian-row:last-child { margin-bottom: 0; }
-        .rincian-label { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-bottom: 5px; font-weight: bold;}
-        
-        .btn { display: inline-flex; align-items: center; justify-content: center; padding: 0.6rem 1.2rem; border-radius: 6px; border: none; font-weight: 600; cursor: pointer; transition: background 0.2s; gap: 0.5rem; }
-        .btn-primary { background: var(--primary); color: white; }
-        .btn-primary:hover { background: var(--primary-dark); }
-        .btn-danger { background: var(--danger); color: white; }
-        .btn-danger:hover { background: #dc2626; }
-        .btn-outline { background: transparent; border: 1px solid var(--border); color: var(--text-main); }
-        .btn-outline:hover { background: var(--bg); }
-        .btn-warning { background: var(--warning); color: white; }
-        .btn-warning:hover { background: #d97706; }
-        
-        .btn-excel { background: var(--excel); color: white; }
-        .btn-excel:hover { background: #0c5e31; }
+        body { background-color: var(--bg-color); color: var(--text-color); display: flex; height: 100vh; overflow: hidden; }
 
-        .logo-uploader { border: 2px dashed var(--border); padding: 1rem; text-align: center; border-radius: 8px; cursor: pointer; margin-bottom: 1rem; }
-        #logo-preview { max-height: 80px; display: block; margin: 0 auto; }
-
-        /* --- TABLE STYLES --- */
-        .table-responsive { overflow-x: auto; }
-        table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-        th, td { padding: 0.75rem 1rem; text-align: left; border-bottom: 1px solid var(--border); }
-        th { background-color: var(--bg); font-weight: 600; color: var(--text-muted); }
-        tr:hover { background-color: #f8fafc; }
-        .action-buttons { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-
-        /* --- MODAL PREVIEW --- */
-        #preview-modal {
-            display: none;
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0, 0, 0, 0.7);
-            z-index: 9999;
-            align-items: center;
-            justify-content: center;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .modal-content {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            max-width: 800px;
-            width: 100%;
-            position: relative;
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-            transition: max-width 0.3s;
-        }
-
-        .modal-content.size-a6 { max-width: 800px; } 
-
-        .modal-actions {
-            margin-top: 20px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 10px;
-            border-top: 1px solid var(--border);
-            padding-top: 15px;
-        }
-
-        .paper-simulation {
-            border: 1px solid #ddd;
-            background: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            margin: 0 auto;
-            width: 100%; 
-            min-height: 280px; 
-            overflow: hidden;
-        }
-
-        /* --- STYLES KHUSUS KWITANSI (CUSTOM SIZE) --- */
-        .receipt-box {
-            border: 2px solid #000;
-            padding: 10px; 
-            width: 100%;
-            height: 335px;
+        /* --- SIDEBAR --- */
+        aside {
+            width: 260px;
+            background-color: var(--surface-color);
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
-            background: #fff;
-            color: #000;
-            font-size: 7pt; 
-            -webkit-print-color-adjust: exact; 
-            print-color-adjust: exact; 
+            padding: 1.5rem;
+            z-index: 10;
         }
-        .receipt-header { display: flex; align-items: center; border-bottom: 2px double #000; padding-bottom: 5px; margin-bottom: 8px; }
-        .receipt-logo-area { width: 35px; height: 35px; display: flex; align-items: center; justify-content: center; margin-right: 8px;}
-        .receipt-logo { max-width: 100%; max-height: 100%; object-fit: contain; }
-        .receipt-title-area { flex: 1; text-align: center; }
-        .receipt-title { font-size: 9pt; font-weight: bold; text-transform: uppercase; line-height: 1.1; }
-        .receipt-subtitle { font-size: 9pt; }
-
-        .receipt-content-row { display: flex; flex: 1; gap: 10px; margin-bottom: 8px; }
-        .receipt-details { flex: 2; display: flex; flex-direction: column; justify-content: start; }
-        .receipt-amount-side { flex: 1; border: 1px solid #000; padding: 5px; display: flex; flex-direction: column; justify-content: center; text-align: center; background: #f9f9f9; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-
-        .receipt-row { display: flex; margin-bottom: 2px; align-items: baseline; }
-        .receipt-label { width: 70px; font-weight: bold; font-size: 7pt; white-space: nowrap; }
-        .receipt-separator { width: 5px; }
-        .receipt-value { flex: 1; border-bottom: 1px dotted #000; text-align: right; font-size: 7pt; padding-right: 2px;}
-
-        /* Style Khusus Tabel Rincian di Kwitansi */
-        .receipt-breakdown {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 5px;
-            font-size: 6.5pt; 
+        aside h1 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--primary-color); font-weight: 800; line-height: 1.3; }
+        aside p.subtitle { font-size: 0.8rem; color: #6b7280; margin-bottom: 2.5rem; }
+        
+        nav button { 
+            width: 100%; padding: 12px 16px; margin-bottom: 8px; text-align: left; background: none; border: none; 
+            border-radius: 8px; cursor: pointer; font-size: 0.95rem; color: var(--text-color); transition: all 0.2s; 
+            display: flex; align-items: center; gap: 10px; font-weight: 500;
         }
-        .receipt-breakdown th { text-align: center; border-bottom: 1px solid #000; padding: 2px; background: #eee; }
-        .receipt-breakdown td { padding: 1px 2px; border-bottom: 1px dashed #ccc; }
-        .breakdown-col-center { text-align: center; }
-        .breakdown-col-right { text-align: right; }
+        nav button:hover { background-color: #eff6ff; color: var(--primary-color); }
+        nav button.active { background-color: var(--primary-color); color: white; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); }
 
-        .receipt-amount-text { font-size: 6.5pt; font-style: italic; margin-bottom: 2px; line-height: 1.1; }
-        .receipt-amount-num { font-size: 9pt; font-weight: bold; color: #000; }
-        .receipt-amount-num-half { font-size: 12pt; font-weight: bold; color: #d00; } 
+        /* --- MAIN CONTENT --- */
+        main { flex: 1; padding: 2rem; overflow-y: auto; position: relative; }
+        .section { display: none; animation: fadeIn 0.3s ease-in-out; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .receipt-footer { display: flex; justify-content: space-between; border-top: 1px solid #000; padding-top: 5px; margin-top: auto; }
-        .sign-area { text-align: center; width: 45%; }
-        .sign-space { height: 25px; } 
+        .card { background: var(--surface-color); padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1.5rem; border: 1px solid var(--border-color); }
+        .card h2 { margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--secondary-color); border-bottom: 2px solid #f3f4f6; padding-bottom: 0.8rem; display: flex; align-items: center; justify-content: space-between; }
 
-        /* --- STYLES KHUSUS LAPORAN --- */
-        .report-header { text-align: center; margin-bottom: 20px; }
-        .report-table { width: 100%; border-collapse: collapse; font-size: 11pt; }
-        .report-table th, .report-table td { border: 1px solid #000; padding: 8px; text-align: left; }
-        .report-table th { background-color: #f0f0f0; text-align: center; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+        /* --- DASHBOARD WIDGETS --- */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+        .stat-card { background: white; padding: 1.5rem; border-radius: 10px; border: 1px solid var(--border-color); border-left: 4px solid var(--primary-color); transition: transform 0.2s; }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
+        .stat-number { font-size: 2rem; font-weight: 800; color: var(--text-color); margin: 10px 0; }
+        .stat-label { font-size: 0.85rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
 
-        /* --- TOAST --- */
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 10001; }
-        .toast { background: var(--text-main); color: white; padding: 12px 24px; border-radius: 6px; margin-top: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); display: flex; align-items: center; gap: 10px; animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards; min-width: 250px; }
-        .toast.success { border-left: 4px solid var(--success); }
-        .toast.error { border-left: 4px solid var(--danger); }
-        @keyframes slideIn { from { transform: translateX(100%); opacity: 0; } to { transform: translateX(0); opacity: 1; } }
-        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; pointer-events: none; } }
+        /* --- FORMS & TABLES --- */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; margin-bottom: 1rem; }
+        .form-group { margin-bottom: 1rem; }
+        .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #374151; }
+        .form-group input, .form-group select { 
+            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.95rem; 
+            transition: border-color 0.2s; background-color: #fff;
+        }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
+        .form-group input[readonly] { background-color: #f3f4f6; color: #6b7280; font-weight: bold; cursor: not-allowed; }
 
-        /* --- PRINT STYLES --- */
+        .input-group { display: flex; gap: 0.5rem; }
+
+        /* Table Styles */
+        .data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
+        .data-table th, .data-table td { padding: 0.85rem; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .data-table th { background-color: #f9fafb; font-weight: 600; color: #4b5563; position: sticky; top: 0; }
+        .data-table tr:hover { background-color: #f9fafb; }
+        
+        /* Specific Table for Golongan Entry */
+        .golongan-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 0.9rem; }
+        .golongan-table th, .golongan-table td { padding: 0.6rem; border: 1px solid var(--border-color); }
+        .golongan-table input { width: 80px; padding: 0.4rem; border: 1px solid #d1d5db; border-radius: 4px; text-align: right; }
+        .fixed-nominal { background-color: #f3f4f6; padding: 0.4rem; border-radius: 4px; text-align: right; display: inline-block; width: 90px; font-weight: 600; color: #4b5563;}
+
+        /* Buttons */
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-primary:hover { background-color: var(--secondary-color); transform: translateY(-1px); }
+        .btn-secondary { background-color: #6b7280; color: white; }
+        .btn-secondary:hover { background-color: #4b5563; }
+        .btn-success { background-color: var(--success-color); color: white; }
+        .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
+
+        /* --- UI UTILITIES --- */
+        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); display: none; justify-content: center; align-items: center; z-index: 3000; flex-direction: column; backdrop-filter: blur(2px); }
+        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        .toast { position: fixed; bottom: 24px; right: 24px; background: #1f2937; color: white; padding: 12px 24px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); opacity: 0; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 2000; display: flex; align-items: center; gap: 10px; }
+        .toast.show { opacity: 1; transform: translateY(0); }
+        .toast.error { background: var(--danger-color); }
+        .toast.success { background: var(--success-color); }
+
+        /* --- MODAL PREVIEW --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); }
+        .modal-overlay.open { display: flex; }
+        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 900px; width: 95%; max-height: 95vh; overflow-y: auto; position: relative; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .close-modal { position: absolute; top: 1rem; right: 1.5rem; cursor: pointer; font-size: 1.8rem; color: #9ca3af; transition: color 0.2s; }
+        .close-modal:hover { color: var(--danger-color); }
+        .modal-actions { margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 1.5rem; }
+
+        /* ========================================= */
+        /*            PRINT STYLES (21x9cm)          */
+        /* ========================================= */
+        #print-area { display: none; }
+        
         @media print {
-            body > *:not(#printable-area) { display: none !important; }
-            #printable-area {
-                display: block !important;
-                position: absolute;
-                top: 0; left: 0;
-                width: 100%; height: 100%;
-                margin: 0; padding: 0;
-                overflow: hidden;
-                background: white;
+            body * { visibility: hidden; }
+            #print-area, #print-area * { visibility: visible; }
+            #print-area { 
+                display: block; 
+                position: absolute; 
+                left: 0; 
+                top: 0; 
+                width: 100%; 
             }
-            body, html { overflow: hidden; width: 100%; height: 100%; }
+            @page { size: 21cm 9cm portrait; margin: 0; }
         }
 
-        @media print {
-            body.mode-print-report @page { size: A4 portrait; margin: 10mm; }
-            body.mode-print-receipt @page { size: 215mm 110mm; margin: 0; }
+        .receipt-preview {
+            /* Preview on screen */
+            width: 21cm;
+            height: 9cm;
+            padding: 5mm;
+            border: 1px dashed #ccc;
+            margin: 0 auto;
+            background: white;
+            font-family: 'Arial Narrow', Arial, sans-serif;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            display: flex;         
+            flex-direction: column; 
+            box-sizing: border-box;
+            gap: 4px; 
         }
+
+        /* Receipt Internal Layout */
+        .col-top { flex: 0 0 auto; border-bottom: 2px double black; padding-bottom: 4px; margin-bottom: 4px; }
+        .kop-container { text-align: center; margin-bottom: 6px; }
+        .kop-row { display: flex; align-items: center; justify-content: center; gap: 10px; }
+        .kop-logo { width: 45px; height: auto; flex-shrink: 0; }
+        .kop-logo img { width: 100%; display: block; }
+        .kop-text { text-align: center; }
+        .kop-text h2 { font-size: 10pt; font-weight: 900; text-transform: uppercase; margin: 0; line-height: 1.1; color: #000; }
+        .kop-text h3 { font-size: 8pt; font-weight: 700; text-transform: uppercase; margin: 0; line-height: 1.1; color: #000; }
+        .kw-title-row { text-align: center; margin-top: 4px; }
+        .kw-title { font-size: 11pt; font-weight: bold; text-decoration: underline; text-transform: uppercase; }
+        .kw-no { font-size: 8pt; font-weight: 600; margin-top: 2px; }
+
+        .col-mid { flex: 1; display: flex; flex-direction: row; gap: 8px; overflow: hidden; }
+        
+        .mid-left { flex: 2; display: flex; flex-direction: column; gap: 2px; font-size: 8pt; }
+        .data-row { display: flex; gap: 5px; margin-bottom: 1px; align-items: baseline; }
+        .data-label { width: 85px; flex-shrink: 0; font-weight: 700; font-size: 8pt; }
+        .data-value { flex-grow: 1; border-bottom: 1px dotted #999; min-height: 12px; font-family: 'Arial', sans-serif; font-weight: 600; }
+        
+        .compact-table { width: 100%; border-collapse: collapse; font-size: 7.5pt; margin-top: 2px; }
+        .compact-table th, .compact-table td { border: 1px solid black; padding: 1px 4px; text-align: center; }
+        .compact-table td:first-child { text-align: left; font-weight: 600; }
+        .compact-table td:nth-last-child(2), .compact-table td:last-child { text-align: right; }
+        .compact-table th { background: #eee; font-size: 7pt; }
+        
+        .terbilang-box { font-style: italic; font-size: 7pt; background: #fffbeb; padding: 4px; border: 1px solid #fcd34d; margin-top: 4px; color: #92400e; }
+
+        .mid-right { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 8px; padding-left: 5px; }
+        .total-box { border: 1px solid black; padding: 6px; text-align: right; background: #fff; }
+        .total-label { font-size: 7.5pt; font-weight: 700; display: block; text-transform: uppercase; }
+        .total-amount { font-size: 11pt; font-weight: 900; color: #000; }
+        .highlight-total { border: 2px solid black; background-color: #fff7ed; }
+        .highlight-total .total-label, .highlight-total .total-amount { font-size: 12pt !important; color: #000; }
+
+        .col-bottom { flex: 0 0 auto; display: flex; justify-content: space-between; margin-top: auto; font-size: 8pt; }
+        .sig-col { text-align: center; width: 45%; }
+        .sig-date { margin-bottom: 2px; font-size: 7.5pt; }
+        .sig-title { margin-bottom: 2px; font-weight: bold; text-decoration: underline; font-size: 8pt; }
+        .sig-space { height: 30px; }
+        .sig-name { text-decoration: underline; font-weight: 900; display: block; margin-top: 2px; font-size: 9pt; line-height: 1.2; }
+        .sig-nip { font-size: 7pt; margin-top: 2px; }
+
+        /* BLOCKING MODAL (Error Config) */
+        .blocking-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(220, 38, 38, 0.95); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 2rem; }
+        .blocking-content { background: white; padding: 2.5rem; border-radius: 12px; max-width: 600px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); text-align: left; }
+        .error-icon { font-size: 3rem; color: #ef4444; margin-bottom: 1rem; display: block; text-align: center; }
+        
+        /* Filter Box */
+        .filter-container { background: #eff6ff; padding: 1rem; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 1.5rem; }
+        .filter-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; }
+        .filter-item { flex: 1; min-width: 180px; }
+        .summary-box { display: flex; gap: 2rem; margin-top: 1rem; flex-wrap: wrap; }
+        .summary-item { background: white; padding: 1rem; border-radius: 8px; flex: 1; min-width: 200px; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .summary-val { font-size: 1.5rem; font-weight: 800; color: var(--primary-color); }
+        .summary-title { font-size: 0.8rem; color: #6b7280; text-transform: uppercase; font-weight: 600; }
+
     </style>
 </head>
 <body>
 
-    <header>
-        <h1>Aplikasi Iuran Korpri v.1.0</h1>
+    <!-- SIDEBAR -->
+    <aside>
+        <h1>KORPRI<br>BANGKALAN</h1>
+        <p class="subtitle">Sistem Kwitansi Digital</p>
         <nav>
-            <button id="nav-input" class="active" onclick="switchTab('input')">Input Data</button>
-            <button id="nav-report" onclick="switchTab('report')">Laporan Data</button>
+            <button id="nav-dashboard" onclick="switchTab('dashboard')">📊 Dashboard</button>
+            <button id="nav-entry" class="active" onclick="switchTab('entry')">📝 Entri Transaksi</button>
+            <button id="nav-report" onclick="switchTab('report')">📋 Laporan Data</button>
         </nav>
-    </header>
+        <div style="margin-top: auto; font-size: 0.75rem; color: #9ca3af; text-align: center;">
+            v1.0.0 &copy; 2023
+        </div>
+    </aside>
 
+    <!-- MAIN CONTENT -->
     <main>
-        <!-- HALAMAN INPUT -->
-        <section id="input-section" class="section-view active">
-            
-            <!-- PENGATURAN UMUM -->
-            <div class="card">
-                <h4>Pengaturan Tampilan Cetak</h4>
-                <div style="display: flex; gap: 20px; align-items: flex-start; flex-wrap: wrap;">
-                    <div style="flex: 1;">
-                        <div class="form-group">
-                            <label>Upload Logo Instansi</label>
-                            <div class="logo-uploader" onclick="document.getElementById('logo-input').click()">
-                                <input type="file" id="logo-input" accept="image/*" hidden onchange="handleLogoUpload(this)">
-                                <span id="upload-text">Klik untuk upload logo</span>
-                            </div>
-                        </div>
-                    </div>
-                    <div style="flex: 0 0 100px; text-align: center;">
-                        <img id="logo-preview" src="" alt="Logo Preview" style="display:none; max-width: 100%; border: 1px solid #ddd; padding: 5px;">
-                        <p style="font-size: 0.8rem; margin-top: 5px;">Preview</p>
-                    </div>
-                    <div style="flex: 1;">
-                        <div class="form-group">
-                            <label>Nama Instansi (Header)</label>
-                            <input type="text" id="setting-instansi" value="isikan nama organisasi" onchange="saveSettings()">
-                        </div>
-                        <div class="form-group">
-                            <label>Alamat / OPD Lengkap</label>
-                            <input type="text" id="setting-alamat" value="isikan alamat" onchange="saveSettings()">
-                        </div>
-                    </div>
-                </div>
+        <!-- Loading Spinner -->
+        <div id="loading" class="loading-overlay">
+            <div class="spinner"></div>
+            <p style="font-weight: 600; color: var(--text-color);">Sedang Memproses...</p>
+        </div>
 
-                <!-- PENGATURAN NOMOR OTOMATIS -->
-                <h4>Pengaturan Nomor Otomatis</h4>
-                <div class="form-grid">
-                    <div class="form-group">
-                        <label>Akhiran</label>
-                        <input type="text" id="setting-suffix" value="/KORP/BKL" placeholder="Contoh: /KORP/BKL" onchange="saveSettings()">
-                        <small style="color: var(--text-muted)">Teks di bagian paling belakang nomor.</small>
-                    </div>
-                    <div class="form-group">
-                        <label>Pemisah (Separator)</label>
-                        <select id="setting-separator" onchange="saveSettings()">
-                            <option value="/">/ (Slash)</option>
-                            <option value=".">. (Titik)</option>
-                            <option value="-">- (Strip)</option>
-                            <option value="">Tanpa Pemisah</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label>Reset Urutan Bulan Ini (Manual)</label>
-                        <input type="number" id="setting-counter-manual" placeholder="Otomatis jika kosong" onchange="saveSettings()" min="1">
-                        <small style="color: var(--text-muted)">Isi angka untuk memaksa mulai dari urutan tertentu. Kosongkan untuk lanjut otomatis.</small>
-                    </div>
+        <!-- 1. DASHBOARD SECTION -->
+        <section id="section-dashboard" class="section">
+            <div class="card">
+                <h2>Ringkasan Dashboard</h2>
+                
+                <!-- Statistik Petugas -->
+                <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--primary-color);">👥 Performa Petugas</h3>
+                <div class="stats-grid" id="petugasStatsGrid">
+                    <!-- Javascript will populate this -->
+                    <div class="stat-card"><div class="stat-label">Memuat Data...</div></div>
                 </div>
             </div>
 
-            <!-- FORM INPUT -->
             <div class="card">
-                <h3 id="form-title">Input Data Baru</h3>
-                <form id="kwitansi-form" onsubmit="handleFormSubmit(event)">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Tanggal Cetak</label>
-                            <input type="date" id="tgl-cetak" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Tanggal Setor (Urut No. Kwitansi)</label>
-                            <input type="date" id="tgl-setor" onchange="generateNextNumber()">
-                            <small style="color: var(--text-muted)">Jika diisi, tanggal ini akan digunakan untuk urutan nomor kwitansi.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Nomor Kwitansi (Otomatis)</label>
-                            <input type="text" id="no-kwitansi" readonly style="background-color: #e2e8f0; font-family: monospace;">
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Nama Penyetor</label>
-                            <input type="text" id="nama-penyetor" placeholder="Nama Lengkap" required>
-                        </div>
-                        
-                        <div class="form-group">
-                            <label>Untuk Periode (Bulan)</label>
-                            <select id="periode-bulan" required>
-                                <option value="">Pilih Bulan</option>
-                                <option value="Januari">Januari</option>
-                                <option value="Februari">Februari</option>
-                                <option value="Maret">Maret</option>
-                                <option value="April">April</option>
-                                <option value="Mei">Mei</option>
-                                <option value="Juni">Juni</option>
-                                <option value="Juli">Juli</option>
-                                <option value="Agustus">Agustus</option>
-                                <option value="September">September</option>
-                                <option value="Oktober">Oktober</option>
-                                <option value="November">November</option>
-                                <option value="Desember">Desember</option>
+                <h2>🔍 Filter & Ringkasan Setoran</h2>
+                <div class="filter-container">
+                    <div class="filter-row">
+                        <div class="filter-item">
+                            <label style="font-size:0.85rem; font-weight:600; margin-bottom:4px; display:block;">Bulan</label>
+                            <select id="filterBulan" class="form-control" onchange="filterSummary()">
+                                <option value="Semua">Semua Bulan</option>
                             </select>
                         </div>
-
-                        <div class="form-group">
-                            <label>Tahun</label>
-                            <select id="periode-tahun" required>
-                                <!-- Diisi via JS -->
+                        <div class="filter-item">
+                            <label style="font-size:0.85rem; font-weight:600; margin-bottom:4px; display:block;">Tahun</label>
+                            <select id="filterTahun" class="form-control" onchange="filterSummary()">
+                                <option value="Semua">Semua Tahun</option>
                             </select>
                         </div>
-
-                        <!-- INPUTAN RINCIAN GOLONGAN -->
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <label>Rincian Golongan</label>
-                            <div class="rincian-container" id="rincian-inputs">
-                                <div class="rincian-header">
-                                    <div class="rincian-label">Gol.</div>
-                                    <div class="rincian-label">Jml Org</div>
-                                    <div class="rincian-label">Nominal/Orang</div>
-                                </div>
-                                <!-- Baris 1 -->
-                                <div class="rincian-row">
-                                    <select class="input-golongan">
-                                        <option value="1">Gol 1</option>
-                                        <!--<option value="2">Gol 2</option>-->
-                                        <!--<option value="3">Gol 3</option>-->
-                                        <!--<option value="4">Gol 4</option>-->
-                                    </select>
-                                    <input type="number" class="input-jumlah" placeholder="0" min="0" oninput="calculateTotal()">
-                                    <input type="number" class="input-nominal" placeholder="wajib diisi nominal per golongan" min="0" oninput="calculateTotal()">
-                                </div>
-                                <!-- Baris 2 -->
-                                <div class="rincian-row">
-                                    <select class="input-golongan">
-                                        <option value="2">Gol 2</option>
-                                        <!--<option value="1">Gol 1</option>-->
-                                        <!--<option value="3">Gol 3</option>-->
-                                        <!--<option value="4">Gol 4</option>-->
-                                    </select>
-                                    <input type="number" class="input-jumlah" placeholder="0" min="0" oninput="calculateTotal()">
-                                    <input type="number" class="input-nominal" placeholder="wajib diisi nominal per golongan" min="0" oninput="calculateTotal()">
-                                </div>
-                                <!-- Baris 3 -->
-                                <div class="rincian-row">
-                                    <select class="input-golongan">
-                                        <option value="3">Gol 3</option>
-                                        <!--<option value="1">Gol 1</option>-->
-                                        <!--<option value="2">Gol 2</option>-->
-                                        <!--<option value="4">Gol 4</option>-->
-                                    </select>
-                                    <input type="number" class="input-jumlah" placeholder="0" min="0" oninput="calculateTotal()">
-                                    <input type="number" class="input-nominal" placeholder="wajib diisi nominal per golongan" min="0" oninput="calculateTotal()">
-                                </div>
-                                <!-- Baris 4 -->
-                                <div class="rincian-row">
-                                    <select class="input-golongan">
-                                        <option value="4">Gol 4</option>
-                                        <!--<option value="1">Gol 1</option>-->
-                                        <!--<option value="2">Gol 2</option>-->
-                                        <!--<option value="3">Gol 3</option>-->
-                                    </select>
-                                    <input type="number" class="input-jumlah" placeholder="0" min="0" oninput="calculateTotal()">
-                                    <input type="number" class="input-nominal" placeholder="wajib diisi nominal per golongan" min="0" oninput="calculateTotal()">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Total Nominal Bruto (Auto)</label>
-                            <input type="number" id="nominal" placeholder="0" required readonly style="background-color: #e2e8f0; font-weight: bold;">
-                            <small style="color: var(--text-muted)">Dihitung dari rincian golongan.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Total Bayar (50% Auto)</label>
-                            <input type="number" id="total-bayar" placeholder="0" required readonly style="background-color: #dcfce7; font-weight: bold; color: #166534; border-color: #86efac;">
-                            <small style="color: var(--text-muted)">Otomatis 50% dari Total Nominal Bruto.</small>
-                        </div>
-
-                        <div class="form-group">
-                            <label>OPD / Instansi</label>
-                            <input type="text" id="opd-select" placeholder="Ketik nama OPD..." required>
-                        </div>
-
-                        <div class="form-group">
-                            <label>Nama Penerima (Dropdown)</label>
-                            <select id="penerima-select" required>
-                                <option value="">Pilih Penerima</option>
-                                <option value="Dewi Aniza">Dewi Aniza</option>
-                                <option value="Dita Ayuningtyas">Dita Ayuningtyas</option>
-                                <option value="Rusdi Mardiyanto">Rusdi Mardiyanto</option>
-                                <option value="Samsuri">Samsuri</option>
+                        <div class="filter-item">
+                            <label style="font-size:0.85rem; font-weight:600; margin-bottom:4px; display:block;">Petugas</label>
+                            <select id="filterPetugas" class="form-control" onchange="filterSummary()">
+                                <option value="Semua">Semua Petugas</option>
                             </select>
-                        </div>
-
-                        <div class="form-group" style="grid-column: 1 / -1;">
-                            <label>Catatan / Keterangan</label>
-                            <textarea id="catatan" rows="2" placeholder="Contoh: Setoran Bulanan..."></textarea>
                         </div>
                     </div>
 
-                    <div style="margin-top: 1.5rem; text-align: right;">
-                        <button type="button" class="btn btn-outline" onclick="resetForm()">Reset</button>
-                        <button type="submit" class="btn btn-primary" id="btn-submit">
-                            <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9V2h12v7M6 18H4a2 2 0 01-2-2v-5a2 2 0 012-2h16a2 2 0 012 2v5a2 2 0 01-2 2h-2"/><path d="M6 14h12v8H6z"/></svg>
-                            <span id="btn-submit-text">Simpan & Cetak</span>
-                        </button>
+                    <div class="summary-box">
+                        <div class="summary-item">
+                            <div class="summary-title">Jumlah Transaksi</div>
+                            <div class="summary-val" id="summaryCount">0</div>
+                        </div>
+                        <div class="summary-item">
+                            <div class="summary-title">Total Setoran (50%)</div>
+                            <div class="summary-val" id="summaryTotal">Rp 0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 style="margin-bottom:0.5rem; font-size:0.9rem; color:#4b5563;">Detail Transaksi Terfilter:</h4>
+                <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>No. Kwitansi</th>
+                                <th>Tanggal</th>
+                                <th>Penyetor</th>
+                                <th>OPD</th>
+                                <th>Petugas</th>
+                                <th style="text-align:right;">Nominal</th>
+                            </tr>
+                        </thead>
+                        <tbody id="filteredTableBody"></tbody>
+                    </table>
+                </div>
+                <div id="emptyFilterState" style="text-align: center; padding: 1.5rem; color: #9ca3af; font-style: italic; display: none;">Tidak ada data sesuai filter.</div>
+            </div>
+
+            <div class="card">
+                <h2>📅 Rekap Bulanan</h2>
+                <div style="overflow-x: auto;">
+                    <table class="data-table">
+                        <thead><tr><th>Bulan</th><th>Tahun</th><th style="text-align:center;">Jumlah Transaksi</th></tr></thead>
+                        <tbody id="monthlyStatsTableBody"></tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. ENTRY SECTION -->
+        <section id="section-entry" class="section active">
+            <div class="card">
+                <h2>Form Transaksi Baru</h2>
+                <form id="transactionForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>No. Kwitansi (Otomatis)</label>
+                            <input type="text" id="receiptNo" readonly placeholder="Fetching...">
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Cetak</label>
+                            <input type="date" id="printDate" required>
+                        </div>
+                    </div>
+                    <div class="form-grid">
+                        <div class="form-group"><label>Nama Penyetor</label><input type="text" id="depositorName" placeholder="Nama Lengkap" required></div>
+                        <div class="form-group"><label>Nama OPD</label><input type="text" id="opdName" placeholder="Instansi/OPD" required></div>
+                        <div class="form-group"><label>Tanggal Setor</label><input type="date" id="depositDate" required></div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Petugas Penerima</label>
+                        <select id="receiverName" required>
+                            <option value="" disabled selected>-- Pilih Petugas --</option>
+                            <option value="Dewi Aniza, SE.MM">Dewi Aniza, SE.MM</option>
+                            <option value="Dita Ayuningtyas P, SE">Dita Ayuningtyas P, SE</option>
+                            <option value="Rusdi Mardiyanto, SH">Rusdi Mardiyanto, SH</option>
+                            <option value="Samsuri, SE">Samsuri, SE</option>
+                        </select>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Periode Setoran</label>
+                            <div class="input-group">
+                                <select id="periodeBulan" required></select>
+                                <select id="periodeTahun" required></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin: 1.5rem 0 1rem; font-size: 1rem; color: var(--text-color);">Rincian Nominal</h3>
+                    <table class="golongan-table">
+                        <thead><tr><th>Golongan</th><th>Harga Satuan</th><th style="width:100px;">Jumlah</th><th style="width:120px; text-align:right;">Subtotal</th></tr></thead>
+                        <tbody>
+                            <tr><td>Gol 1</td><td><div class="fixed-nominal">Rp 2.000</div></td><td><input type="number" id="qtyG1" min="0" value="0" oninput="calculateTotal()"></td><td id="subG1" style="text-align: right;">Rp 0</td></tr>
+                            <tr><td>Gol 2</td><td><div class="fixed-nominal">Rp 5.000</div></td><td><input type="number" id="qtyG2" min="0" value="0" oninput="calculateTotal()"></td><td id="subG2" style="text-align: right;">Rp 0</td></tr>
+                            <tr><td>Gol 3</td><td><div class="fixed-nominal">Rp 7.000</div></td><td><input type="number" id="qtyG3" min="0" value="0" oninput="calculateTotal()"></td><td id="subG3" style="text-align: right;">Rp 0</td></tr>
+                            <tr><td>Gol 4</td><td><div class="fixed-nominal">Rp 10.000</div></td><td><input type="number" id="qtyG4" min="0" value="0" oninput="calculateTotal()"></td><td id="subG4" style="text-align: right;">Rp 0</td></tr>
+                        </tbody>
+                    </table>
+                    
+                    <div style="display: flex; justify-content: space-between; align-items: center; background: #ecfdf5; padding: 1.2rem; border: 1px solid #a7f3d0; border-radius: 8px; margin-bottom: 2rem;">
+                        <div>
+                            <div style="font-size: 0.85rem; color: #065f46; font-weight: 600;">TOTAL TRANSAKSI</div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: #065f46;" id="displayTotalBayar">Rp 0</div>
+                        </div>
+                        <div style="text-align: right; border-left: 2px solid #a7f3d0; padding-left: 2rem;">
+                            <div style="font-size: 0.85rem; color: var(--primary-color); font-weight: 600;">SETORAN 50%</div>
+                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary-color);" id="displayBayar50">Rp 0</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
+                        <button type="submit" class="btn btn-primary">💾 Simpan & Cetak</button>
                     </div>
                 </form>
             </div>
         </section>
 
-        <!-- HALAMAN LAPORAN -->
-        <section id="report-section" class="section-view">
+        <!-- 3. REPORT SECTION -->
+        <section id="section-report" class="section">
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 10px;">
-                    <h3>Laporan Data Setoran</h3>
-                    <div class="action-buttons">
-                        <button onclick="exportToExcel()" class="btn btn-excel">
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
-                            Ekspor Excel
-                        </button>
-                        <button onclick="printReportTable()" class="btn btn-outline">
-                            <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z"/></svg>
-                            Cetak Laporan
-                        </button>
-                    </div>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
+                    <h2>Laporan Data Transaksi</h2>
+                    <button class="btn btn-secondary btn-sm" onclick="fetchDataFromSheet()">🔄 Refresh Data</button>
                 </div>
-
-                <div class="table-responsive">
-                    <table id="report-table">
-                        <thead>
-                            <tr>
-                                <th>No. Kwitansi</th>
-                                <th>Periode</th>
-                                <th>Tgl Cetak</th>
-                                <th>Tgl Setor</th>
-                                <th>Penyetor</th>
-                                <th>Penerima</th>
-                                <th>OPD</th>
-                                <th>Total Bruto</th>
-                                <th>Total Bayar (50%)</th>
-                                <th>Aksi</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr>
-                                <td colspan="11" style="text-align: center; color: var(--text-muted);">Belum ada data.</td>
-                            </tr>
-                        </tbody>
+                
+                <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+                    <table class="data-table">
+                        <thead><tr><th>No Kwitansi</th><th>Tgl Cetak</th><th>Penyetor</th><th>OPD</th><th>Periode</th><th>Petugas</th><th style="text-align:right;">Total</th><th style="text-align:right;">50%</th><th>Aksi</th></tr></thead>
+                        <tbody id="reportTableBody"></tbody>
                     </table>
+                </div>
+                <div id="emptyState" style="text-align: center; padding: 3rem; color: #9ca3af; display: none;">
+                    <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
+                    <p>Belum ada data transaksi.</p>
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- MODAL PREVIEW POPUP -->
-    <div id="preview-modal">
+    <!-- MODAL PREVIEW KWITANSI -->
+    <div class="modal-overlay" id="printModal">
         <div class="modal-content">
-            <h3 style="margin-bottom: 15px; color: var(--primary);">Preview Cetak</h3>
+            <span class="close-modal" onclick="closePrintModal()">&times;</span>
+            <h2 style="margin-bottom: 0.5rem; text-align: center; color: var(--secondary-color);">Pratinjau Cetak (21x9 cm)</h2>
+            <p style="text-align: center; font-size: 0.9rem; color: #6b7280; margin-bottom: 1.5rem;">Pastikan pengaturan printer menggunakan kertas ukuran 21cm x 9cm.</p>
             
-            <div id="modal-preview-body" class="paper-simulation"></div>
-
+            <div class="receipt-preview" id="a6PreviewContent">
+                <!-- Javascript renders receipt here -->
+            </div>
+            
             <div class="modal-actions">
-                <button onclick="closePreview()" class="btn btn-outline">Tutup</button>
-                <button onclick="executePrint()" class="btn btn-primary">Cetak / Simpan PDF</button>
+                <button class="btn btn-secondary" onclick="closePrintModal()">Tutup</button>
+                <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak Sekarang</button>
             </div>
         </div>
     </div>
 
-    <div id="printable-area" style="display: none;"></div>
-    <div id="toast-container"></div>
+    <!-- AREA KHUSUS PRINT (HIDDEN DI LAYAR, MUNCUL SAAT DIPRINT) -->
+    <div id="print-area">
+        <div class="receipt-preview" style="border: none; margin: 0; box-shadow: none;">
+            <div id="printContentTarget"></div>
+        </div>
+    </div>
 
-        <script>
-        // --- STATE MANAGEMENT ---
-        let db = []; // Global variable penampung data dari Google Sheet
+    <!-- MODAL ERROR (Jika URL Script Salah) -->
+    <div id="blockingModal" class="blocking-modal">
+        <div class="blocking-content">
+            <span class="error-icon">⚠️</span>
+            <h2 style="color:#b91c1c; margin-bottom:1rem; text-align: center;">Error Konfigurasi Kritis</h2>
+            <p style="margin-bottom:1.5rem; line-height: 1.6; color: #4b5563;">
+                Aplikasi tidak dapat berjalan karena <strong>URL Google Script</strong> belum dikonfigurasi dengan benar.
+            </p>
+            <div style="background: #fef3c7; padding: 1rem; border-radius: 6px; font-size: 0.9rem; color: #92400e; margin-bottom: 1.5rem;">
+                <strong>Tindakan Perbaikan:</strong>
+                <ol style="margin-left: 1.2rem; margin-top: 0.5rem;">
+                    <li>Buka file HTML ini di Text Editor (Notepad/VS Code).</li>
+                    <li>Scroll ke bawah sampai menemukan <code>const GOOGLE_SCRIPT_URL = "..."</code>.</li>
+                    <li>Ganti tanda <code>...</code> atau placeholder dengan <strong>Web App URL</strong> dari Google Apps Script Anda.</li>
+                    <li>Simpan file dan refresh halaman.</li>
+                </ol>
+            </div>
+            <button onclick="location.reload()" class="btn btn-primary" style="width: 100%;">Coba Lagi</button>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION -->
+    <div id="toast" class="toast">
+        <span id="toast-icon">✅</span>
+        <span id="toast-msg">Pesan notifikasi</span>
+    </div>
+
+    <script>
+        // ==========================================================
+        // 1. KONFIGURASI URL (PENTING!)
+        // ==========================================================
+        // Ganti URL di bawah ini dengan URL Web App dari Google Apps Script Anda
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2dLrH58ZrnlI1dH2fDTOJDhFYQWytg_wbSTvah25q-F429yUXqJce_W-eD1Iv0NEW6A/exec"; 
         
-        // URL Google Apps Script (Ganti dengan URL Web App Anda tadi)
-        const API_URL = 'https://script.google.com/macros/s/AKfycbyZBTSgQSQTukbGhCEuGZcIUv1KnvCANOUDWoIBzfQUXLrQW4-kIkRHYaD6yQtHtFhw/exec'; 
-
-        // Ambil data appSettings tetap dari LocalStorage
-        let appSettings = JSON.parse(localStorage.getItem('appSettings')) || {
-            logo: null,
-            instansi: 'PEMERINTAH KOTA CONTOH',
-            alamat: 'DINAS CONTOH INDONESIA',
-            numberSuffix: '/KWJ',
-            numberSeparator: '/',
-            counterManual: '' 
-        };
-
-        let currentEditId = null;
-
-        // --- HELPER: FORMAT TANGGAL DD-MM-YYYY ---
-        function formatDateIndo(dateString) {
-            if (!dateString) return '-';
-            const parts = dateString.split('-');
-            if (parts.length !== 3) return dateString;
-            return `${parts[2]}-${parts[1]}-${parts[0]}`;
+        // Cek URL saat load halaman
+        if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE") || GOOGLE_SCRIPT_URL.length < 20) {
+            document.getElementById('blockingModal').style.display = 'flex';
+            throw new Error("Konfigurasi URL Script belum dilakukan.");
         }
 
-        // --- INIT ---
-        document.addEventListener('DOMContentLoaded', async () => {
-            loadSettings();
-            initDateFields();
-            // 1. Muat data dulu dari Google Sheet
-            await renderReportTable();
-            // 2. Hitung nomor otomatis setelah data masuk
-            generateNextNumber();
+        // Konstanta Data
+        const RATES = { g1: 2000, g2: 5000, g3: 7000, g4: 10000 };
+        const BULAN_NAMA = [
+            "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
+            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
+        ];
+        const PETUGAS_LIST = [
+            "Dewi Aniza, SE.MM",
+            "Dita Ayuningtyas P, SE",
+            "Rusdi Mardiyanto, SH",
+            "Samsuri, SE"
+        ];
+
+        let transactions = []; // Cache data transaksi
+
+        // Event Listener Init
+        document.addEventListener('DOMContentLoaded', () => {
+            try {
+                initDateDropdowns();
+                initFilterDropdowns();
+                const today = new Date();
+                const dateStr = today.toISOString().split('T')[0];
+                document.getElementById('printDate').value = dateStr;
+                document.getElementById('depositDate').value = dateStr;
+                
+                // Default Masuk Entry Tab
+                switchTab('entry'); 
+                fetchLastReceiptNumber(); 
+            } catch (e) {
+                console.error("Init Error", e);
+                showToast("Gagal memuat aplikasi", "error");
+            }
         });
 
         // --- NAVIGATION ---
-        function switchTab(tabName) {
-            document.querySelectorAll('nav button').forEach(b => b.classList.remove('active'));
-            document.getElementById(`nav-${tabName}`).classList.add('active');
-            document.querySelectorAll('.section-view').forEach(s => s.classList.remove('active'));
-            document.getElementById(`${tabName}-section`).classList.add('active');
-            if (tabName === 'report') renderReportTable();
-        }
-
-        // --- SETTINGS & LOGO (Tetap LocalStorage) ---
-        function loadSettings() {
-            document.getElementById('setting-instansi').value = appSettings.instansi;
-            document.getElementById('setting-alamat').value = appSettings.alamat;
-            document.getElementById('setting-suffix').value = appSettings.numberSuffix;
-            document.getElementById('setting-separator').value = appSettings.numberSeparator;
-            document.getElementById('setting-counter-manual').value = appSettings.counterManual;
-
-            if (appSettings.logo) {
-                const prev = document.getElementById('logo-preview');
-                prev.src = appSettings.logo;
-                prev.style.display = 'block';
-                document.getElementById('upload-text').innerText = "Ganti Logo";
-            }
-        }
-
-        function saveSettings() {
-            appSettings.instansi = document.getElementById('setting-instansi').value;
-            appSettings.alamat = document.getElementById('setting-alamat').value;
-            appSettings.numberSuffix = document.getElementById('setting-suffix').value;
-            appSettings.numberSeparator = document.getElementById('setting-separator').value;
-            appSettings.counterManual = document.getElementById('setting-counter-manual').value;
+        function switchTab(tab) {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+            document.getElementById(`section-${tab}`).classList.add('active');
+            document.getElementById(`nav-${tab}`).classList.add('active');
             
-            localStorage.setItem('appSettings', JSON.stringify(appSettings));
-            generateNextNumber();
-            showToast("Pengaturan disimpan", "success");
+            if(tab === 'report') fetchDataFromSheet();
+            if(tab === 'dashboard') renderDashboard();
         }
 
-        function handleLogoUpload(input) {
-            if (input.files && input.files[0]) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    appSettings.logo = e.target.result;
-                    localStorage.setItem('appSettings', JSON.stringify(appSettings));
-                    loadSettings();
-                    showToast("Logo berhasil diupload", "success");
-                }
-                reader.readAsDataURL(input.files[0]);
+        function showLoading(show) { 
+            document.getElementById('loading').style.display = show ? 'flex' : 'none'; 
+        }
+
+        // --- INITIALIZATION HELPERS ---
+        function initDateDropdowns() {
+            const monthSelect = document.getElementById('periodeBulan');
+            const yearSelect = document.getElementById('periodeTahun');
+            const currentYear = new Date().getFullYear();
+
+            BULAN_NAMA.forEach((bln, index) => {
+                const option = document.createElement('option');
+                option.value = bln;
+                option.textContent = bln;
+                if(index === new Date().getMonth()) option.selected = true;
+                monthSelect.appendChild(option);
+            });
+
+            for(let i = currentYear - 1; i <= currentYear + 1; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i;
+                if(i === currentYear) option.selected = true;
+                yearSelect.appendChild(option);
             }
         }
 
-        // --- FORM HELPERS ---
-        function initDateFields() {
-            document.getElementById('tgl-cetak').valueAsDate = new Date();
-            document.getElementById('tgl-setor').valueAsDate = new Date();
-            const yearSelect = document.getElementById('periode-tahun');
+        function initFilterDropdowns() {
+            const fMonth = document.getElementById('filterBulan');
+            BULAN_NAMA.forEach(bln => {
+                const opt = document.createElement('option');
+                opt.value = bln;
+                opt.textContent = bln;
+                fMonth.appendChild(opt);
+            });
+
+            const fYear = document.getElementById('filterTahun');
             const currentYear = new Date().getFullYear();
-            for (let i = currentYear - 2; i <= currentYear + 5; i++) {
+            for(let i = currentYear - 2; i <= currentYear; i++) {
                 const opt = document.createElement('option');
                 opt.value = i;
-                opt.text = i;
-                if (i === currentYear) opt.selected = true;
-                yearSelect.appendChild(opt);
-            }
-        }
-
-        function formatCurrencyInput(input) {
-            // Helper kosong
-        }
-
-        function generateNextNumber() {
-            const dateVal = document.getElementById('tgl-setor').value || document.getElementById('tgl-cetak').value;
-            
-            if (!dateVal) return;
-            const dateObj = new Date(dateVal);
-            const year = dateObj.getFullYear();
-            const month = dateObj.getMonth() + 1; 
-            const prefix = `${year}${month.toString().padStart(2, '0')}`;
-            const separator = appSettings.numberSeparator || '';
-            const suffix = appSettings.numberSuffix || '';
-            let nextSeq = 1;
-            
-            // Gunakan db (sudah diambil dari Google Sheet)
-            const monthlyData = db.filter(item => item.no_kwitansi.startsWith(prefix));
-
-            const manualCounter = parseInt(appSettings.counterManual);
-            
-            if (!isNaN(manualCounter) && manualCounter > 0) {
-                nextSeq = manualCounter;
-            } else {
-                if (monthlyData.length > 0) {
-                    const sequences = monthlyData.map(d => {
-                        const parts = d.no_kwitansi.split(separator);
-                        if(parts.length >1) {
-                            return parseInt(parts[1]);
-                        }
-                        return 0;
-                    });
-                    const maxSeq = Math.max(...sequences);
-                    nextSeq = maxSeq + 1;
-                }
+                opt.textContent = i;
+                if(i === currentYear) opt.selected = true;
+                fYear.appendChild(opt);
             }
 
-            const seqStr = nextSeq.toString().padStart(4, '0');
-            const noKwitansi = `${prefix}${separator}${seqStr}${suffix}`;
-            document.getElementById('no-kwitansi').value = noKwitansi;
+            const fPetugas = document.getElementById('filterPetugas');
+            PETUGAS_LIST.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name;
+                opt.textContent = name;
+                fPetugas.appendChild(opt);
+            });
         }
 
-        document.getElementById('tgl-setor').addEventListener('change', generateNextNumber);
-        document.getElementById('tgl-cetak').addEventListener('change', generateNextNumber);
-
-        function resetForm() {
-            document.getElementById('kwitansi-form').reset();
-            initDateFields();
-            generateNextNumber();
-            
-            currentEditId = null;
-            document.getElementById('form-title').innerText = "Buat Kwitansi Baru (215x110)";
-            document.getElementById('btn-submit-text').innerText = "Simpan & Preview";
-            document.getElementById('btn-submit').classList.remove('btn-warning');
-            document.getElementById('btn-submit').classList.add('btn-primary');
-
-            const selects = document.querySelectorAll('.input-golongan');
-            selects.forEach((s, index) => { s.selectedIndex = index; });
-            document.querySelectorAll('.input-jumlah, .input-nominal').forEach(i => i.value = '');
-            document.getElementById('nominal').value = '';
-            document.getElementById('total-bayar').value = '';
-        }
-
+        // --- CORE LOGIC: CALCULATIONS ---
         function calculateTotal() {
-            let total = 0;
-            const rows = document.querySelectorAll('.rincian-row');
+            const q1 = parseInt(document.getElementById('qtyG1').value) || 0;
+            const q2 = parseInt(document.getElementById('qtyG2').value) || 0;
+            const q3 = parseInt(document.getElementById('qtyG3').value) || 0;
+            const q4 = parseInt(document.getElementById('qtyG4').value) || 0;
             
-            rows.forEach(row => {
-                const inputJumlah = row.querySelector('.input-jumlah');
-                if (inputJumlah) { 
-                    const jumlah = parseFloat(inputJumlah.value) || 0;
-                    const nominal = parseFloat(row.querySelector('.input-nominal').value) || 0;
-                    total += (jumlah * nominal);
-                }
-            });
-
-            const totalBayar = total * 0.5;
-
-            document.getElementById('nominal').value = total;
-            document.getElementById('total-bayar').value = totalBayar;
+            const s1 = q1 * RATES.g1, s2 = q2 * RATES.g2, s3 = q3 * RATES.g3, s4 = q4 * RATES.g4;
+            
+            document.getElementById('subG1').textContent = formatRupiah(s1);
+            document.getElementById('subG2').textContent = formatRupiah(s2);
+            document.getElementById('subG3').textContent = formatRupiah(s3);
+            document.getElementById('subG4').textContent = formatRupiah(s4);
+            
+            const total = s1 + s2 + s3 + s4;
+            document.getElementById('displayTotalBayar').textContent = formatRupiah(total);
+            document.getElementById('displayBayar50').textContent = formatRupiah(total / 2);
+            
+            return { total, fiftyPercent: total / 2, q1, q2, q3, q4, s1, s2, s3, s4 };
         }
 
-        function terbilang(nilai) {
-            nilai = Math.abs(nilai);
-            var simpanNilaiBagi = 0;
-            var huruf = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
-            var temp = "";
-            if (nilai < 12) {
-                temp = " " + huruf[nilai];
-            } else if (nilai < 20) {
-                temp = terbilang(nilai - 10) + " Belas";
-            } else if (nilai < 100) {
-                simpanNilaiBagi = Math.floor(nilai / 10);
-                temp = terbilang(simpanNilaiBagi) + " Puluh" + terbilang(nilai % 10);
-            } else if (nilai < 200) {
-                temp = " Seratus" + terbilang(nilai - 100);
-            } else if (nilai < 1000) {
-                simpanNilaiBagi = Math.floor(nilai / 100);
-                temp = terbilang(simpanNilaiBagi) + " Ratus" + terbilang(nilai % 100);
-            } else if (nilai < 2000) {
-                temp = " Seribu" + terbilang(nilai - 1000);
-            } else if (nilai < 1000000) {
-                simpanNilaiBagi = Math.floor(nilai / 1000);
-                temp = terbilang(simpanNilaiBagi) + " Ribu" + terbilang(nilai % 1000);
-            } else if (nilai < 1000000000) {
-                simpanNilaiBagi = Math.floor(nilai / 1000000);
-                temp = terbilang(simpanNilaiBagi) + " Juta" + terbilang(nilai % 1000000);
-            } else if (nilai < 1000000000000) {
-                simpanNilaiBagi = Math.floor(nilai / 1000000000);
-                temp = terbilang(simpanNilaiBagi) + " Miliar" + terbilang(nilai % 1000000000);
-            }
-            return temp;
-        }
-
-        // --- FITUR EDIT ---
-        function openEditMode(id) {
-            const item = db.find(d => d.id == id);
-            if(!item) return;
-
-            currentEditId = id;
-
-            switchTab('input');
-            document.getElementById('form-title').innerText = "Edit Kwitansi (215x110)";
-            document.getElementById('btn-submit-text').innerText = "Update & Preview";
-            document.getElementById('btn-submit').classList.remove('btn-primary');
-            document.getElementById('btn-submit').classList.add('btn-warning');
-
-            // Mapping kolom DB ke ID HTML
-            document.getElementById('no-kwitansi').value = item.no_kwitansi;
-            document.getElementById('tgl-cetak').value = item.tgl_cetak;
-            document.getElementById('tgl-setor').value = item.tgl_setor;
-            document.getElementById('nama-penyetor').value = item.nama_penyetor;
-            document.getElementById('periode-bulan').value = item.bulan;
-            document.getElementById('periode-tahun').value = item.tahun;
-            document.getElementById('nominal').value = item.nominal;
-            document.getElementById('total-bayar').value = item.total_bayar;
-            document.getElementById('opd-select').value = item.opd;
-            document.getElementById('penerima-select').value = item.penerima;
-            document.getElementById('catatan').value = item.catatan;
-
-            // Parsing rincian JSON dari DB
-            if (item.rincian) {
-                const rincianData = JSON.parse(item.rincian);
-                const selects = document.querySelectorAll('.input-golongan');
-                const rows = document.querySelectorAll('.rincian-row');
-                
-                // Reset input
-                rows.forEach(row => {
-                    row.querySelector('.input-jumlah').value = '';
-                    row.querySelector('.input-nominal').value = '';
+        // --- DATA FETCHING & SAVING ---
+        function fetchLastReceiptNumber() {
+            showLoading(true);
+            fetch(GOOGLE_SCRIPT_URL)
+                .then(r => r.json())
+                .then(data => { 
+                    transactions = data; // Update cache
+                    updateReceiptNumberDisplay(transactions); 
+                    showLoading(false);
+                })
+                .catch(err => {
+                    showLoading(false);
+                    console.error("Gagal ambil nomor urut", err);
+                    document.getElementById('receiptNo').value = "GAGAL KONEKSI";
+                    showToast("Gagal koneksi ke Google Sheet", "error");
                 });
-
-                if (rincianData && rincianData.length > 0) {
-                    rincianData.forEach((r, idx) => {
-                        if (idx < 4) {
-                            const row = rows[idx];
-                            const golSelect = row.querySelector('.input-golongan');
-                            let optionFound = false;
-                            for(let i=0; i<golSelect.options.length; i++){
-                                if(golSelect.options[i].value === r.gol){
-                                    golSelect.selectedIndex = i;
-                                    optionFound = true;
-                                    break;
-                                }
-                            }
-                            row.querySelector('.input-jumlah').value = r.jumlah;
-                            row.querySelector('.input-nominal').value = r.nominal;
-                        }
-                    });
-                }
-            }
-
-            showToast("Mode Edit Aktif", "success");
         }
 
-        // --- CORE ACTIONS (GAS KIRIM KE GOOGLE SHEETS) ---
-        async function handleFormSubmit(e) {
+        function fetchDataFromSheet() {
+            showLoading(true);
+            fetch(GOOGLE_SCRIPT_URL).then(r=>r.json()).then(data => {
+                transactions = data;
+                renderReport();
+                showLoading(false);
+            }).catch(e=>{ showToast("Gagal mengambil data", "error"); showLoading(false); });
+        }
+
+        function updateReceiptNumberDisplay(dataList) {
+            const now = new Date();
+            const currentMonthYear = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+            let lastSeq = 0;
+            
+            if (Array.isArray(dataList) && dataList.length > 0) {
+                // Cari transaksi terakhir di bulan ini
+                const lastTxSameMonth = dataList
+                    .filter(tx => tx.printDate && tx.printDate.startsWith(currentMonthYear))
+                    .sort((a,b) => {
+                        // Extract sequence number safely
+                        const seqA = parseInt(a.receiptNo.split('/')[2]) || 0;
+                        const seqB = parseInt(b.receiptNo.split('/')[2]) || 0;
+                        return seqB - seqA; // Descending
+                    })[0];
+
+                if(lastTxSameMonth) {
+                    const parts = lastTxSameMonth.receiptNo.split('/');
+                    if(parts.length >= 3) {
+                        let seq = parseInt(parts[2]);
+                        if(!isNaN(seq)) lastSeq = seq;
+                    }
+                }
+            }
+            const nextSeq = lastSeq + 1;
+            const roman = toRoman(now.getMonth() + 1);
+            document.getElementById('receiptNo').value = `KORP/BKL/${String(nextSeq).padStart(3, '0')}/${roman}/${now.getFullYear()}`;
+        }
+
+        // --- FORM SUBMISSION ---
+        document.getElementById('transactionForm').addEventListener('submit', function(e) {
             e.preventDefault();
-
-            // Ambil Data Rincian Golongan
-            const rincianData = [];
-            const rows = document.querySelectorAll('.rincian-row');
-            let hasDetails = false;
-
-            rows.forEach(row => {
-                const inputJumlah = row.querySelector('.input-jumlah');
-                if (inputJumlah) { 
-                    const gol = row.querySelector('.input-golongan').value;
-                    const jumlah = parseInt(inputJumlah.value) || 0;
-                    const nominal = parseInt(row.querySelector('.input-nominal').value) || 0;
-                    
-                    if (jumlah > 0 || nominal > 0) {
-                        rincianData.push({ gol, jumlah, nominal, total: jumlah * nominal });
-                        hasDetails = true;
-                    }
-                }
-            });
-
-            const nominalValue = parseFloat(document.getElementById('nominal').value) || 0;
-            const totalBayarValue = parseFloat(document.getElementById('total-bayar').value) || 0;
-
-            // Jika ID ada (Edit), kirim ID integer. Jika baru, kirim string "baru"
-            const idPayload = currentEditId ? currentEditId : "baru";
-
-            const data = {
-                action: 'simpan',
-                id: idPayload,
-                noKwitansi: document.getElementById('no-kwitansi').value,
-                tglCetak: document.getElementById('tgl-cetak').value,
-                tglSetor: document.getElementById('tgl-setor').value || document.getElementById('tgl-cetak').value,
-                namaPenyetor: document.getElementById('nama-penyetor').value,
-                bulan: document.getElementById('periode-bulan').value,
-                tahun: document.getElementById('periode-tahun').value,
-                nominal: nominalValue,
-                totalBayar: totalBayarValue,
-                opd: document.getElementById('opd-select').value,
-                penerima: document.getElementById('penerima-select').value,
-                catatan: document.getElementById('catatan').value,
-                rincian: hasDetails ? rincianData : [], 
-                instansiHeader: appSettings.instansi,
-                alamatHeader: appSettings.alamat,
-                logo: appSettings.logo
-            };
             
-            try {
-                const response = await fetch(API_URL, {
-                    method: 'POST',
-                    redirect: "follow", // Penting untuk Google Script
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(data)
-                });
-
-                const result = await response.json();
-
-                if(result.status === 'sukses') {
-                    showToast("Data berhasil disimpan ke Sheet", "success");
-                    
-                    if (currentEditId) {
-                        currentEditId = null;
-                        document.getElementById('form-title').innerText = "Buat Kwitansi Baru (215x110)";
-                        document.getElementById('btn-submit-text').innerText = "Simpan & Preview";
-                        document.getElementById('btn-submit').classList.remove('btn-warning');
-                        document.getElementById('btn-submit').classList.add('btn-primary');
-                    }
-                    
-                    // Refresh data dari Google Sheet
-                    await renderReportTable();
-                    showReceiptPreview(data);
-                    resetForm();
-                } else {
-                    showToast("Gagal: " + result.pesan, "error");
-                }
-
-            } catch (error) {
-                console.error("Error:", error);
-                showToast("Terjadi kesalahan koneksi ke Sheet", "error");
-            }
+            const calcs = calculateTotal();
+            if (calcs.total === 0) return showToast("Total tidak boleh 0", "error");
             
-            // Reset manual counter
-        }
-
-        async function deleteData(id) {
-            if(confirm('Yakin ingin menghapus data ini?')) {
-                try {
-                    const response = await fetch(API_URL, {
-                        method: 'POST',
-                        redirect: "follow",
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ action: 'hapus', id: id })
-                    });
-                    const result = await response.json();
-                    
-                    if(result.status === 'sukses') {
-                        showToast("Data dihapus", "success");
-                        await renderReportTable();
-                    } else {
-                        showToast(result.pesan, "error");
-                    }
-                } catch (error) {
-                    console.error(error);
-                    showToast("Gagal menghapus", "error");
-                }
-            }
-        }
-
-        // --- REPORTING (AMBIL DARI GOOGLE SHEET) ---
-        async function renderReportTable() {
-            const tbody = document.querySelector('#report-table tbody');
-            tbody.innerHTML = '';
+            const receiptNo = document.getElementById('receiptNo').value;
             
-            try {
-                // Ambil data dari Google Script (Method GET via POST trick or direct GET)
-                // Google Apps Script doGet biasanya pake GET, tapi lebih aman pake POST redirect follow
-                // Namun doGet script di atas return JSON langsung.
-                
-                // Gunakan fetch biasa ke URL
-                const response = await fetch(API_URL);
-                const dataFromDB = await response.json();
-                
-                // Update global db variable
-                db = dataFromDB;
-
-                if (db.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; padding: 2rem; color: #64748b;">Belum ada data kwitansi.</td></tr>`;
-                    return;
-                }
-                
-                db.forEach(item => {
-                    // Parsing rincian JSON dari Sheet
-                    if (typeof item.rincian === 'string') {
-                        try {
-                            item.rincian = JSON.parse(item.rincian);
-                        } catch (e) {
-                            item.rincian = [];
-                        }
-                    }
-
-                    const tr = document.createElement('tr');
-                    const formattedNominal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.nominal);
-                    const formattedBayar = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.total_bayar);
-                    
-                    tr.innerHTML = `
-                        <td><span style="font-family: monospace; font-weight: bold;">${item.no_kwitansi}</span></td>
-                        <td>${item.bulan} ${item.tahun}</td>
-                        <td>${formatDateIndo(item.tgl_cetak)}</td>
-                        <td><span style="color: var(--primary); font-weight: bold;">${formatDateIndo(item.tgl_setor)}</span></td>
-                        <td>${item.nama_penyetor}</td>
-                        <td>${item.penerima}</td>
-                        <td>${item.opd}</td>
-                        <td>${formattedNominal}</td>
-                        <td style="font-weight:bold; color: var(--primary-dark);">${formattedBayar}</td>
-                        <td>
-                            <div class="action-buttons">
-                                <button onclick="openEditMode(${item.id})" class="btn btn-warning" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Edit</button>
-                                <button onclick="showReceiptPreviewById(${item.id})" class="btn btn-primary" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Preview</button>
-                                <button onclick="deleteData(${item.id})" class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;">Hapus</button>
-                            </div>
-                        </td>
-                    `;
-                    tbody.appendChild(tr);
-                });
-            } catch (error) {
-                console.error("Gagal mengambil data:", error);
-                tbody.innerHTML = `<tr><td colspan="11" style="text-align: center; color: red;">Gagal Mengambil Data dari Sheet</td></tr>`;
-            }
-        }
-
-        // --- EXPORT TO EXCEL ---
-        function exportToExcel() {
-            if (db.length === 0) {
-                showToast("Tidak ada data untuk diekspor", "error");
+            if(receiptNo.includes("GAGAL") || !receiptNo) {
+                showToast("Nomor Kwitansi tidak valid. Refresh halaman.", "error");
                 return;
             }
 
-            const sortedDb = [...db].sort((a, b) => b.id - a.id);
+            const formData = {
+                receiptNo, 
+                printDate: document.getElementById('printDate').value,
+                depositor: document.getElementById('depositorName').value,
+                opd: document.getElementById('opdName').value,
+                depositDate: document.getElementById('depositDate').value,
+                receiverName: document.getElementById('receiverName').value,
+                periodeBulan: document.getElementById('periodeBulan').value, 
+                periodeTahun: document.getElementById('periodeTahun').value, 
+                details: calcs, 
+                totalBayar: calcs.total, 
+                bayar50: calcs.fiftyPercent
+            };
 
-            let table = `<table border="1" style="border-collapse: collapse; width: 100%;">`;
-            table += `<tr><th colspan="10" style="text-align:center; font-size: 16px; font-weight: bold;">LAPORAN SETORAN</th></tr>`;
-            table += `<tr><th colspan="10" style="text-align:center;">${appSettings.instansi}</th></tr>`;
-            table += `<tr><td colspan="10" style="text-align:center;">Tanggal Export: ${new Date().toLocaleDateString('id-ID')}</td></tr>`;
-            table += `<tr><td colspan="10">&nbsp;</td></tr>`; 
-
-            table += `<thead>
-                <tr style="background-color: #f0f0f0;">
-                    <th>No. Kwitansi</th>
-                    <th>Periode</th>
-                    <th>Tgl Cetak</th>
-                    <th>Tgl Setor</th>
-                    <th>Penyetor</th>
-                    <th>Penerima</th>
-                    <th>OPD</th>
-                    <th>Total Bruto</th>
-                    <th>Total Bayar (50%)</th>
-                </tr>
-            </thead>`;
-
-            table += "<tbody>";
-            sortedDb.forEach(item => {
-                const formattedNominal = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.nominal);
-                const formattedBayar = new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(item.total_bayar);
-                
-                table += `
-                    <tr>
-                        <td style="mso-number-format:'\@'">${item.no_kwitansi}</td>
-                        <td>${item.bulan} ${item.tahun}</td>
-                        <td>${formatDateIndo(item.tgl_cetak)}</td>
-                        <td>${formatDateIndo(item.tgl_setor)}</td>
-                        <td>${item.nama_penyetor}</td>
-                        <td>${item.penerima}</td>
-                        <td>${item.opd}</td>
-                        <td>${formattedNominal}</td>
-                        <td>${formattedBayar}</td>
-                    </tr>
-                `;
-            });
-            table += "</tbody></table>";
-
-            const blob = new Blob([table], { type: 'application/vnd.ms-excel' });
-            const url = URL.createObjectURL(blob);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `Laporan_Setoran_${new Date().toISOString().slice(0,10)}.xls`; 
-            document.body.appendChild(a);
-            a.click();
-            document.body.removeChild(a);
-        }
-
-        // --- PREVIEW & PRINT LOGIC ---
-
-        function showReceiptPreviewById(id) {
-            // Cari di variable global 'db'
-            const item = db.find(d => d.id === id);
-            if(item) {
-                // Mapping nama kolom DB ke nama properti JS
-                const jsItem = {
-                    id: item.id,
-                    noKwitansi: item.no_kwitansi,
-                    tglCetak: item.tgl_cetak,
-                    tglSetor: item.tgl_setor,
-                    namaPenyetor: item.nama_penyetor,
-                    bulan: item.bulan,
-                    tahun: item.tahun,
-                    nominal: item.nominal,
-                    totalBayar: item.total_bayar,
-                    opd: item.opd,
-                    penerima: item.penerima,
-                    catatan: item.catatan,
-                    rincian: item.rincian ? JSON.parse(item.rincian) : [],
-                    instansiHeader: appSettings.instansi,
-                    alamatHeader: appSettings.alamat,
-                    logo: appSettings.logo
-                };
-                showReceiptPreview(jsItem);
-            }
-        }
-
-        function showReceiptPreview(item) {
-            let rincianHtml = '';
-            if (item.rincian && item.rincian.length > 0) {
-                let rows = '';
-                item.rincian.forEach(r => {
-                    const nominalFmt = new Intl.NumberFormat('id-ID').format(r.nominal);
-                    const totalFmt = new Intl.NumberFormat('id-ID').format(r.total);
-                    rows += `
-                        <tr>
-                            <td>${r.gol}</td>
-                            <td class="breakdown-col-center">${r.jumlah}</td>
-                            <td class="breakdown-col-right">${nominalFmt}</td>
-                            <td class="breakdown-col-right">${totalFmt}</td>
-                        </tr>
-                    `;
+            showLoading(true);
+            fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(formData) })
+                .then(r=>r.json()).then(res => {
+                    showLoading(false);
+                    if(res.status === 'success') {
+                        showToast("Data berhasil disimpan!", "success");
+                        showPrintPreview(formData);
+                        fetchLastReceiptNumber(); // Update counter
+                        resetForm();
+                    } else { 
+                        showToast("Gagal menyimpan: " + (res.message || "Unknown Error"), "error"); 
+                    }
+                }).catch(err => { 
+                    showLoading(false); 
+                    console.error(err);
+                    showToast("Error jaringan. Cek koneksi.", "error"); 
                 });
-                rincianHtml = `
-                    <table class="receipt-breakdown">
-                        <thead>
-                            <tr>
-                                <th>Gol</th>
-                                <th>Jml</th>
-                                <th>Nominal</th>
-                                <th>Total</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                `;
-            }
+        });
 
-            const html = `
-                <div class="receipt-box">
-                    <div class="receipt-header">
-                        <div class="receipt-logo-area">
-                            ${item.logo ? `<img src="${item.logo}" class="receipt-logo">` : ''}
-                        </div>
-                        <div class="receipt-title-area">
-                            <div class="receipt-title">${item.instansiHeader}</div>
-                            <div class="receipt-subtitle">${item.alamatHeader}</div>
-                            <div style="text-decoration: underline; font-weight: bold; font-size: 9pt; margin-top: 2px;">KWITANSI</div>
-                        </div>
-                    </div>
-                    
-                    <div class="receipt-content-row">
-                        <div class="receipt-details">
-                            <div class="receipt-row"><div class="receipt-label">No. Kwitansi</div><div class="receipt-separator">:</div><div class="receipt-value">${item.noKwitansi}</div></div>
-                            <div class="receipt-row"><div class="receipt-label">Tanggal Setor</div><div class="receipt-separator">:</div><div class="receipt-value">${formatDateIndo(item.tglSetor)}</div></div>
-                            <div class="receipt-row"><div class="receipt-label">Telah Terima Dari</div><div class="receipt-separator">:</div><div class="receipt-value">${item.namaPenyetor}</div></div>
-                            <div class="receipt-row"><div class="receipt-label">Untuk Periode</div><div class="receipt-separator">:</div><div class="receipt-value">${item.bulan} ${item.tahun}</div></div>
-                            <div class="receipt-row"><div class="receipt-label">OPD / Instansi</div><div class="receipt-separator">:</div><div class="receipt-value">${item.opd}</div></div>
-                            
-                            ${rincianHtml}
-                            
-                            <div class="receipt-row" style="margin-top: 4px;"><div class="receipt-label">Keterangan</div><div class="receipt-separator">:</div><div class="receipt-value">${item.catatan || '-'}</div></div>
-                        </div>
-
-                        <div class="receipt-amount-side">
-                            <div style="font-weight:bold; font-size: 7pt; margin-bottom: 5px;">JUMLAH BRUTO</div>
-                            <div class="receipt-amount-num">Rp. ${new Intl.NumberFormat('id-ID').format(item.nominal)},-</div>
-                            
-                            <!-- GARIS PEMISAH -->
-                            <div style="margin: 4px 0; border-top: 1px solid #000; border-bottom: 1px dashed #000;"></div>
-                            
-                            <div style="font-size: 7pt; margin-bottom: 2px;">BAYAR (50%)</div>
-                            <div class="receipt-amount-num-half">Rp. ${new Intl.NumberFormat('id-ID').format(item.totalBayar)},-</div>
-                            
-                            <div style="margin-top: 3px; height: 1px; background: #000;"></div>
-                            <div class="receipt-amount-text"># ${terbilang(item.nominal)} Rupiah #</div>
-                        </div>
-                    </div>
-
-                    <div class="receipt-footer">
-                        <div class="sign-area"><div style="font-size:6pt;">Penyetor,</div><div class="sign-space"></div><div style="font-size:7pt; text-decoration: underline;">${item.namaPenyetor}</div></div>
-                        <div class="sign-area"><div style="font-size:6pt;">${formatDateIndo(item.tglCetak)}<br>Penerima,</div><div class="sign-space"></div><div style="font-size:7pt; text-decoration: underline;">${item.penerima}</div></div>
-                    </div>
-                </div>
-            `;
-            openPreviewModal(html, 'receipt');
+        function resetForm() {
+            document.getElementById('depositorName').value = '';
+            document.getElementById('opdName').value = '';
+            document.getElementById('receiverName').selectedIndex = 0;
+            ['G1','G2','G3','G4'].forEach(g => document.getElementById('qty'+g).value = 0);
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('printDate').value = today;
+            document.getElementById('depositDate').value = today;
+            initDateDropdowns();
+            fetchLastReceiptNumber();
+            calculateTotal();
         }
 
-        function printReportTable() {
-            let rows = '';
-            if (db.length === 0) rows = '<tr><td colspan="11" style="text-align: center;">Tidak ada data.</td></tr>';
-            else {
-                const sortedDb = [...db].sort((a, b) => b.id - a.id);
-                sortedDb.forEach(item => {
-                    rows += `
-                        <tr>
-                            <td>${item.no_kwitansi}</td>
-                            <td>${item.bulan} ${item.tahun}</td>
-                            <td>${formatDateIndo(item.tgl_cetak)}</td>
-                            <td>${formatDateIndo(item.tgl_setor)}</td>
-                            <td>${item.nama_penyetor}</td>
-                            <td>${item.penerima}</td>
-                            <td>${item.opd}</td>
-                            <td>Rp ${new Intl.NumberFormat('id-ID').format(item.nominal)}</td>
-                            <td>Rp ${new Intl.NumberFormat('id-ID').format(item.total_bayar)}</td>
-                        </tr>
-                    `;
-                });
-            }
-
-            const html = `
-                <div class="report-container">
-                    <div class="report-header">
-                        <h2 style="text-decoration: underline;">LAPORAN SETORAN</h2>
-                        <h3>${appSettings.instansi}</h3>
-                        <p>Tanggal Cetak: ${new Date().toLocaleDateString('id-ID')}</p>
-                    </div>
-                    <table class="report-table">
-                        <thead>
-                            <tr>
-                                <th>No. Kwitansi</th>
-                                <th>Periode</th>
-                                <th>Tgl Cetak</th>
-                                <th>Tgl Setor</th>
-                                <th>Penyetor</th>
-                                <th>Penerima</th>
-                                <th>OPD</th>
-                                <th>Total Bruto</th>
-                                <th>Total Bayar (50%)</th>
-                            </tr>
-                        </thead>
-                        <tbody>${rows}</tbody>
-                    </table>
-                </div>
-            `;
-            openPreviewModal(html, 'report');
-        }
-
-        function openPreviewModal(htmlContent, type) {
-            const modalContent = document.querySelector('.modal-content');
-            const previewBody = document.getElementById('modal-preview-body');
-
-            previewBody.innerHTML = htmlContent;
-            document.getElementById('printable-area').innerHTML = htmlContent;
-            
-            document.body.classList.remove('mode-print-receipt', 'mode-print-report');
-            if (type === 'receipt') {
-                document.body.classList.add('mode-print-receipt');
-                modalContent.classList.add('size-a6');
+        // --- DASHBOARD LOGIC ---
+        function renderDashboard() {
+            if(transactions.length === 0) {
+                // Lazy load if empty
+                showLoading(true);
+                fetch(GOOGLE_SCRIPT_URL).then(r=>r.json()).then(data => {
+                    transactions = data;
+                    processDashboardData(data);
+                    showLoading(false);
+                }).catch(e=>{ showToast("Gagal memuat dashboard", "error"); showLoading(false); });
             } else {
-                document.body.classList.add('mode-print-report');
-                modalContent.classList.remove('size-a6');
+                processDashboardData(transactions);
+            }
+        }
+
+        function processDashboardData(data) {
+            // 1. Hitung per Petugas
+            const petugasCounts = {};
+            PETUGAS_LIST.forEach(name => petugasCounts[name] = 0);
+            const monthlyCounts = {};
+
+            data.forEach(tx => {
+                if(tx.receiverName && petugasCounts[tx.receiverName] !== undefined) {
+                    petugasCounts[tx.receiverName]++;
+                }
+                if(tx.printDate) {
+                    const key = tx.printDate.split('-').slice(0, 2).join('-');
+                    monthlyCounts[key] = (monthlyCounts[key] || 0) + 1;
+                }
+            });
+
+            // Render Petugas Cards
+            const petugasGrid = document.getElementById('petugasStatsGrid');
+            petugasGrid.innerHTML = '';
+            PETUGAS_LIST.forEach(name => {
+                const count = petugasCounts[name] || 0;
+                const shortName = name.split(',')[0].trim(); 
+                const card = document.createElement('div');
+                card.className = 'stat-card';
+                card.innerHTML = `
+                    <div class="stat-label">Petugas: ${shortName}</div>
+                    <div class="stat-number">${count}</div>
+                    <div class="stat-label">Transaksi</div>
+                `;
+                petugasGrid.appendChild(card);
+            });
+
+            // Render Monthly Table
+            const monthlyBody = document.getElementById('monthlyStatsTableBody');
+            monthlyBody.innerHTML = '';
+            const sortedMonths = Object.keys(monthlyCounts).sort().reverse();
+            if(sortedMonths.length === 0) {
+                monthlyBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#999;">Belum ada data</td></tr>';
+            } else {
+                sortedMonths.forEach(key => {
+                    const [year, month] = key.split('-');
+                    const monthName = BULAN_NAMA[parseInt(month) - 1] || month;
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `<td>${monthName}</td><td>${year}</td><td style="text-align: center; font-weight: bold; color: var(--primary-color);">${monthlyCounts[key]}</td>`;
+                    monthlyBody.appendChild(tr);
+                });
             }
 
-            document.getElementById('preview-modal').style.display = 'flex';
+            // Auto trigger filter
+            filterSummary();
         }
 
-        function closePreview() {
-            document.getElementById('preview-modal').style.display = 'none';
+        function filterSummary() {
+            const fBulan = document.getElementById('filterBulan').value;
+            const fTahun = document.getElementById('filterTahun').value;
+            const fPetugas = document.getElementById('filterPetugas').value;
+
+            let totalNominal = 0;
+            let count = 0;
+            let filteredData = [];
+
+            transactions.forEach(tx => {
+                if (fBulan !== "Semua" && String(tx.periodeBulan) !== fBulan) return;
+                if (fTahun !== "Semua" && String(tx.periodeTahun) !== fTahun) return;
+                if (fPetugas !== "Semua" && tx.receiverName !== fPetugas) return;
+
+                totalNominal += tx.bayar50; 
+                count++;
+                filteredData.push(tx);
+            });
+
+            document.getElementById('summaryCount').textContent = count;
+            document.getElementById('summaryTotal').textContent = formatRupiah(totalNominal);
+            renderFilteredTable(filteredData);
         }
 
-        function executePrint() {
-            document.getElementById('preview-modal').style.display = 'none';
-            setTimeout(() => {
-                window.print();
-            },100);
+        function renderFilteredTable(data) {
+            const tbody = document.getElementById('filteredTableBody');
+            const emptyState = document.getElementById('emptyFilterState');
+            tbody.innerHTML = '';
+
+            if (data.length === 0) {
+                emptyState.style.display = 'block';
+            } else {
+                emptyState.style.display = 'none';
+                data.forEach(tx => {
+                    const tr = document.createElement('tr');
+                    tr.innerHTML = `
+                        <td style="font-weight:600;">${tx.receiptNo}</td>
+                        <td>${formatDate(tx.printDate)}</td>
+                        <td>${tx.depositor}</td>
+                        <td>${tx.opd}</td>
+                        <td>${tx.receiverName}</td>
+                        <td style="text-align: right; font-weight:600;">${formatRupiah(tx.bayar50)}</td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            }
         }
 
-        function showToast(message, type = 'success') {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            toast.className = `toast ${type}`;
-            toast.innerText = message;
-            container.appendChild(toast);
-            setTimeout(() => { toast.remove(); }, 3000);
+        // --- REPORT LOGIC ---
+        function renderReport() {
+            const tbody = document.getElementById('reportTableBody');
+            tbody.innerHTML = '';
+            if (transactions.length === 0) { document.getElementById('emptyState').style.display = 'block'; return; }
+            document.getElementById('emptyState').style.display = 'none';
+            
+            // Sort descending
+            const sortedTx = [...transactions].sort((a,b) => new Date(b.printDate) - new Date(a.printDate));
+
+            sortedTx.forEach(tx => {
+                const tr = document.createElement('tr');
+                const periodeStr = `${tx.periodeBulan || ''} ${tx.periodeTahun || ''}`.trim();
+                tr.innerHTML = `
+                    <td>${tx.receiptNo}</td>
+                    <td>${formatDate(tx.printDate)}</td>
+                    <td>${tx.depositor}</td>
+                    <td>${tx.opd}</td>
+                    <td>${periodeStr}</td>
+                    <td>${tx.receiverName || '-'}</td>
+                    <td style="text-align:right;">${formatRupiah(tx.totalBayar)}</td>
+                    <td style="text-align:right; font-weight:bold;">${formatRupiah(tx.bayar50)}</td>
+                    <td>
+                        <button class="btn btn-primary btn-sm" onclick='reprintTx(${JSON.stringify(tx)})'>🖨 Cetak</button>
+                    </td>`;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // --- PRINTING & PREVIEW ---
+        function showPrintPreview(data) {
+            const html = generateReceiptHTML(data);
+            document.getElementById('a6PreviewContent').innerHTML = html;
+            document.getElementById('printContentTarget').innerHTML = html;
+            document.getElementById('printModal').classList.add('open');
+        }
+
+        window.reprintTx = function(dataObj) { showPrintPreview(dataObj); }
+        function closePrintModal() { document.getElementById('printModal').classList.remove('open'); }
+
+        function generateReceiptHTML(data) {
+            const d = data.details;
+            // Menggunakan placeholder logo Korpri (Kemenpan RB logo generic jika tidak ada)
+            const logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_Korpri.svg/1200px-Logo_Korpri.svg.png"; 
+
+            return `
+                <div class="col-top">
+                    <div class="kop-container">
+                        <div class="kop-row">
+                            <div class="kop-logo">
+                                <img src="${logoUrl}" alt="Logo Korpri">
+                            </div>
+                            <div class="kop-text">
+                                <h2>DEWAN PENGURUS KORPRI</h2>
+                                <h3>KABUPATEN BANGKALAN</h3>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="kw-title-row">
+                        <div class="kw-title">KWITANSI</div>
+                        <div class="kw-no">No: ${data.receiptNo}</div>
+                    </div>
+                </div>
+
+                <div class="col-mid">
+                    <div class="mid-left">
+                        <div class="data-row">
+                            <div class="data-label">Telah terima dari</div>
+                            <div class="data-value">${data.depositor}</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">Nama OPD</div>
+                            <div class="data-value">${data.opd}</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">Periode</div>
+                            <div class="data-value">${data.periodeBulan} ${data.periodeTahun}</div>
+                        </div>
+                        <div class="data-row">
+                            <div class="data-label">Tgl. Setor</div>
+                            <div class="data-value">${formatDate(data.depositDate)}</div>
+                        </div>
+
+                        <table class="compact-table">
+                            <thead><tr><th>Ket</th><th>Jml</th><th>Nom</th><th>Total</th></tr></thead>
+                            <tbody>
+                                <tr><td>Gol 1</td><td>${d.q1}</td><td>${RATES.g1}</td><td>${d.s1}</td></tr>
+                                <tr><td>Gol 2</td><td>${d.q2}</td><td>${RATES.g2}</td><td>${d.s2}</td></tr>
+                                <tr><td>Gol 3</td><td>${d.q3}</td><td>${RATES.g3}</td><td>${d.s3}</td></tr>
+                                <tr><td>Gol 4</td><td>${d.q4}</td><td>${RATES.g4}</td><td>${d.s4}</td></tr>
+                            </tbody>
+                        </table>
+                        
+                        <div class="terbilang-box">"${terbilang(data.bayar50)} Rupiah"</div>
+                    </div>
+
+                    <div class="mid-right">
+                        <div class="total-box">
+                            <span class="total-label">TOTAL BAYAR</span>
+                            <span class="total-amount">${formatRupiah(data.totalBayar)}</span>
+                        </div>
+                        <div class="total-box highlight-total">
+                            <span class="total-label">SETORAN 50%</span>
+                            <span class="total-amount">${formatRupiah(data.bayar50)}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-bottom">
+                    <div class="sig-col">
+                        <div class="sig-date">${formatDate(data.printDate)}</div>
+                        <div class="sig-title">Penyetor,</div>
+                        <div class="sig-space"></div>
+                        <span class="sig-name">${data.depositor}</span>
+                    </div>
+                    <div class="sig-col">
+                        <div class="sig-date">${formatDate(data.printDate)}</div>
+                        <div class="sig-title">Penerima,</div>
+                        <div class="sig-space"></div>
+                        <span class="sig-name">${data.receiverName}</span>
+                        <div class="sig-nip">NIP. ............................</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // --- UTILITIES ---
+        function formatRupiah(num) { 
+            return "Rp " + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
+        }
+        function formatDate(str) { 
+            if(!str) return "-"; 
+            const date = new Date(str);
+            return date.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}); 
+        }
+        function showToast(msg, type="success") { 
+            const t=document.getElementById('toast'); 
+            const icon = document.getElementById('toast-icon');
+            const txt = document.getElementById('toast-msg');
+            
+            t.className = `toast ${type} show`;
+            icon.textContent = type === 'error' ? '❌' : '✅';
+            txt.textContent = msg;
+            
+            setTimeout(()=>t.classList.remove('show'), 3000); 
+        }
+        function toRoman(num) { 
+            const roman={M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1}; 
+            let str=''; 
+            for(let i of Object.keys(roman)){
+                let q=Math.floor(num/roman[i]);num-=q*roman[i];str+=i.repeat(q);
+            }
+            return str;
+        }
+        function terbilang(n) { 
+            n=Math.abs(n); 
+            const h=["","Satu","Dua","Tiga","Empat","Lima","Enam","Tujuh","Delapan","Sembilan","Sepuluh","Sebelas"];
+            let t="";
+            if(n<12)t=" "+h[n];
+            else if(n<20)t=terbilang(n-10)+" Belas";
+            else if(n<100)t=terbilang(Math.floor(n/10))+" Puluh"+terbilang(n%10);
+            else if(n<200)t=" Seratus"+terbilang(n-100);
+            else if(n<1000)t=terbilang(Math.floor(n/100))+" Ratus"+terbilang(n%100);
+            else if(n<2000)t=" Seribu"+terbilang(n-1000);
+            else if(n<1000000)t=terbilang(Math.floor(n/1000))+" Ribu"+terbilang(n%1000);
+            else if(n<1000000000)t=terbilang(Math.floor(n/1000000))+" Juta"+terbilang(n%1000000);
+            return t;
         }
     </script>
-	
 </body>
 </html>
+
+<!-- 
+    ============================================
+    PANDUAN BACKEND (GOOGLE APPS SCRIPT)
+    ============================================
+    Salin kode di bawah ini ke file Google Apps Script (Extensions > Apps Script)
+    
+    function doGet(e) {
+      const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Data');
+      const data = sheet.getDataRange().getValues();
+      const headers = data.shift();
+      
+      // Map array ke object
+      const result = data.map(row => {
+        let obj = {};
+        headers.forEach((h, i) => obj[h] = row[i]);
+        return obj;
+      });
+      
+      return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
+    }
+
+    function doPost(e) {
+      const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Data');
+      const params = JSON.parse(e.postData.contents);
+      
+      // Pastikan header ada
+      if(sheet.getLastRow() === 0) {
+        sheet.appendRow(["receiptNo", "printDate", "depositor", "opd", "depositDate", "receiverName", "periodeBulan", "periodeTahun", "totalBayar", "bayar50", "details"]);
+      }
+      
+      sheet.appendRow([
+        params.receiptNo,
+        params.printDate,
+        params.depositor,
+        params.opd,
+        params.depositDate,
+        params.receiverName,
+        params.periodeBulan,
+        params.periodeTahun,
+        params.totalBayar,
+        params.bayar50,
+        JSON.stringify(params.details)
+      ]);
+      
+      return ContentService.createTextOutput(JSON.stringify({status: 'success'})).setMimeType(ContentService.MimeType.JSON);
+    }
+-->
