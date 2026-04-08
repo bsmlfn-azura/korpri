@@ -5,19 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistem Kwitansi Korpri Bangkalan</title>
     <style>
+        /* --- VARIABEL & RESET --- */
         :root {
-            --primary-color: #2563eb; /* Korpri Blue */
-            --secondary-color: #1e40af;
+            --primary-color: #2563eb;
+            --primary-dark: #1e40af;
             --accent-color: #f59e0b;
             --bg-color: #f3f4f6;
             --surface-color: #ffffff;
             --text-color: #1f2937;
             --border-color: #e5e7eb;
-            --success-color: #10b981;
             --danger-color: #ef4444;
+            --success-color: #10b981;
         }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif; }
         
         body { background-color: var(--bg-color); color: var(--text-color); display: flex; height: 100vh; overflow: hidden; }
 
@@ -31,234 +32,240 @@
             padding: 1.5rem;
             z-index: 10;
         }
-        aside h1 { font-size: 1.2rem; margin-bottom: 0.5rem; color: var(--primary-color); font-weight: 800; line-height: 1.3; }
-        aside p.subtitle { font-size: 0.8rem; color: #6b7280; margin-bottom: 2.5rem; }
+        .brand {
+            font-size: 1.2rem;
+            font-weight: 800;
+            color: var(--primary-color);
+            margin-bottom: 2rem;
+            line-height: 1.3;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .brand small { display: block; font-size: 0.8rem; color: #6b7280; font-weight: 500; letter-spacing: 0; }
         
-        nav button { 
-            width: 100%; padding: 12px 16px; margin-bottom: 8px; text-align: left; background: none; border: none; 
-            border-radius: 8px; cursor: pointer; font-size: 0.95rem; color: var(--text-color); transition: all 0.2s; 
-            display: flex; align-items: center; gap: 10px; font-weight: 500;
+        nav button {
+            width: 100%;
+            padding: 12px 16px;
+            margin-bottom: 8px;
+            text-align: left;
+            background: none;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            color: #4b5563;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
         nav button:hover { background-color: #eff6ff; color: var(--primary-color); }
-        nav button.active { background-color: var(--primary-color); color: white; box-shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); }
+        nav button.active { background-color: var(--primary-color); color: white; font-weight: 600; shadow: 0 4px 6px -1px rgba(37, 99, 235, 0.2); }
 
         /* --- MAIN CONTENT --- */
         main { flex: 1; padding: 2rem; overflow-y: auto; position: relative; }
+        
         .section { display: none; animation: fadeIn 0.3s ease-in-out; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
 
-        .card { background: var(--surface-color); padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1.5rem; border: 1px solid var(--border-color); }
-        .card h2 { margin-bottom: 1.5rem; font-size: 1.25rem; color: var(--secondary-color); border-bottom: 2px solid #f3f4f6; padding-bottom: 0.8rem; display: flex; align-items: center; justify-content: space-between; }
+        .card { background: var(--surface-color); padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.05); margin-bottom: 1.5rem; border: 1px solid var(--border-color); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; border-bottom: 1px solid var(--border-color); padding-bottom: 1rem; }
+        .card-header h2 { font-size: 1.25rem; color: var(--text-color); }
 
         /* --- DASHBOARD WIDGETS --- */
-        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
-        .stat-card { background: white; padding: 1.5rem; border-radius: 10px; border: 1px solid var(--border-color); border-left: 4px solid var(--primary-color); transition: transform 0.2s; }
-        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); }
-        .stat-number { font-size: 2rem; font-weight: 800; color: var(--text-color); margin: 10px 0; }
-        .stat-label { font-size: 0.85rem; color: #6b7280; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            padding: 1.5rem;
+            border-radius: 10px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border-color: var(--primary-color); }
+        .stat-number { font-size: 2.5rem; font-weight: 800; color: var(--primary-color); margin: 10px 0; }
+        .stat-label { font-size: 0.9rem; color: #6b7280; font-weight: 600; text-transform: uppercase; }
 
-        /* --- FORMS & TABLES --- */
-        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.2rem; margin-bottom: 1rem; }
-        .form-group { margin-bottom: 1rem; position: relative; }
+        /* --- FORMS & INPUTS --- */
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-bottom: 1.5rem; }
+        .form-group { margin-bottom: 1rem; }
         .form-group label { display: block; margin-bottom: 0.5rem; font-size: 0.9rem; font-weight: 600; color: #374151; }
-        .form-group input, .form-group select { 
-            width: 100%; padding: 0.75rem; border: 1px solid var(--border-color); border-radius: 6px; font-size: 0.95rem; 
-            transition: border-color 0.2s; background-color: #fff;
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #d1d5db;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: border-color 0.2s;
         }
-        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary-color); box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1); }
-        .form-group input[readonly] { background-color: #f3f4f6; color: #6b7280; font-weight: bold; cursor: not-allowed; }
+        .form-group input:focus, .form-group select:focus { outline: none; border-color: var(--primary-color); ring: 2px solid rgba(37, 99, 235, 0.2); }
+        .form-group input[readonly] { background-color: #f3f4f6; color: #6b7280; cursor: not-allowed; font-family: monospace; }
         
-        /* Style untuk pesan peringatan duplikat */
-        .duplicate-warning {
-            color: var(--danger-color);
-            font-size: 0.8rem;
-            margin-top: 4px;
-            display: none;
-            background-color: #fef2f2;
-            padding: 6px;
-            border-radius: 4px;
-            border-left: 3px solid var(--danger-color);
-            animation: slideDown 0.3s ease-out;
-        }
-        @keyframes slideDown { from { opacity: 0; transform: translateY(-5px); } to { opacity: 1; transform: translateY(0); } }
-
         .input-group { display: flex; gap: 0.5rem; }
 
-        /* Table Styles */
-        .data-table { width: 100%; border-collapse: collapse; margin-top: 1rem; font-size: 0.9rem; }
-        .data-table th, .data-table td { padding: 0.85rem; text-align: left; border-bottom: 1px solid var(--border-color); }
-        .data-table th { background-color: #f9fafb; font-weight: 600; color: #4b5563; position: sticky; top: 0; }
+        /* --- TABLES --- */
+        .table-container { overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px; }
+        .data-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+        .data-table th, .data-table td { padding: 12px 16px; text-align: left; border-bottom: 1px solid var(--border-color); }
+        .data-table th { background-color: #f9fafb; font-weight: 600; color: #4b5563; white-space: nowrap; }
         .data-table tr:hover { background-color: #f9fafb; }
-        
-        /* Specific Table for Golongan Entry */
-        .golongan-table { width: 100%; border-collapse: collapse; margin-bottom: 1rem; font-size: 0.9rem; }
-        .golongan-table th, .golongan-table td { padding: 0.6rem; border: 1px solid var(--border-color); }
-        .golongan-table input { width: 80px; padding: 0.4rem; border: 1px solid #d1d5db; border-radius: 4px; text-align: right; }
-        .fixed-nominal { background-color: #f3f4f6; padding: 0.4rem; border-radius: 4px; text-align: right; display: inline-block; width: 90px; font-weight: 600; color: #4b5563;}
+        .data-table tr:nth-child(even) { background-color: #f8fafc; }
+        .text-right { text-align: right !important; }
+        .font-bold { font-weight: 700; }
 
-        /* Buttons */
-        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        /* --- GOLONGAN INPUT TABLE --- */
+        .golongan-table { width: 100%; border-collapse: collapse; margin-bottom: 1.5rem; }
+        .golongan-table th { background-color: var(--primary-color); color: white; }
+        .golongan-table td { padding: 8px; }
+        .golongan-table input { width: 100%; padding: 8px; border: 1px solid #d1d5db; border-radius: 4px; text-align: center; font-weight: bold; }
+        .fixed-nominal { background-color: #e5e7eb; padding: 8px; border-radius: 4px; text-align: center; font-weight: 600; color: #374151; }
+
+        /* --- BUTTONS --- */
+        .btn { padding: 0.75rem 1.5rem; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95rem; font-weight: 600; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px; }
         .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-primary:hover { background-color: var(--secondary-color); transform: translateY(-1px); }
+        .btn-primary:hover { background-color: var(--primary-dark); transform: translateY(-1px); }
         .btn-secondary { background-color: #6b7280; color: white; }
         .btn-secondary:hover { background-color: #4b5563; }
-        .btn-success { background-color: var(--success-color); color: white; }
         .btn-sm { padding: 0.4rem 0.8rem; font-size: 0.85rem; }
 
-        /* --- UI UTILITIES --- */
-        .loading-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.85); display: none; justify-content: center; align-items: center; z-index: 3000; flex-direction: column; backdrop-filter: blur(2px); }
-        .spinner { border: 4px solid #f3f3f3; border-top: 4px solid var(--primary-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin-bottom: 1rem; }
+        /* --- FILTER BOX --- */
+        .filter-container { background: #eff6ff; padding: 1rem; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 1.5rem; display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; }
+        .filter-item { flex: 1; min-width: 150px; }
+        .summary-result-box {
+            background: white; padding: 1.5rem; border-radius: 8px; margin-top: 1rem; 
+            display: flex; justify-content: space-around; align-items: center; border: 1px solid #e5e7eb;
+        }
+        .summary-val { font-size: 1.8rem; font-weight: 800; color: var(--primary-color); }
+        .summary-title { font-size: 0.8rem; color: #6b7280; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* --- MODAL & LOADING --- */
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(255,255,255,0.9); display: none; justify-content: center; align-items: center; 
+            z-index: 3000; flex-direction: column;
+        }
+        .spinner { 
+            border: 5px solid #f3f3f3; border-top: 5px solid var(--primary-color); 
+            border-radius: 50%; width: 50px; height: 50px; animation: spin 1s linear infinite; margin-bottom: 1rem; 
+        }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        .toast { position: fixed; bottom: 24px; right: 24px; background: #1f2937; color: white; padding: 12px 24px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); opacity: 0; transform: translateY(20px); transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55); z-index: 2000; display: flex; align-items: center; gap: 10px; }
+        .modal-overlay { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 2000; 
+        }
+        .modal-overlay.open { display: flex; }
+        .modal-content { 
+            background: white; padding: 2rem; border-radius: 12px; width: 95%; max-width: 900px; 
+            max-height: 95vh; overflow-y: auto; position: relative; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+        }
+        .close-modal { position: absolute; top: 1rem; right: 1.5rem; cursor: pointer; font-size: 1.5rem; color: #6b7280; }
+        .modal-actions { margin-top: 1.5rem; display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid #eee; padding-top: 1rem; }
+
+        /* --- TOAST NOTIFICATION --- */
+        .toast { 
+            position: fixed; bottom: 30px; right: 30px; background: #333; color: white; 
+            padding: 16px 24px; border-radius: 8px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            opacity: 0; transform: translateY(20px); transition: all 0.3s; pointer-events: none; z-index: 5000; 
+        }
         .toast.show { opacity: 1; transform: translateY(0); }
         .toast.error { background: var(--danger-color); }
         .toast.success { background: var(--success-color); }
 
-        /* --- MODAL PREVIEW --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); display: none; justify-content: center; align-items: center; z-index: 1000; backdrop-filter: blur(3px); }
-        .modal-overlay.open { display: flex; }
-        .modal-content { background: white; padding: 2rem; border-radius: 12px; max-width: 900px; width: 95%; max-height: 95vh; overflow-y: auto; position: relative; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-        .close-modal { position: absolute; top: 1rem; right: 1.5rem; cursor: pointer; font-size: 1.8rem; color: #9ca3af; transition: color 0.2s; }
-        .close-modal:hover { color: var(--danger-color); }
-        .modal-actions { margin-top: 2rem; display: flex; gap: 1rem; justify-content: flex-end; border-top: 1px solid var(--border-color); padding-top: 1.5rem; }
-
-        /* ========================================= */
-        /*            PRINT STYLES (21x9cm)          */
-        /* ========================================= */
+        /* --- PRINT STYLES (21x9 CM) --- */
         #print-area { display: none; }
         
         @media print {
-            body * { visibility: hidden; }
-            #print-area, #print-area * { visibility: visible; }
+            body * { visibility: hidden; height: 0; overflow: hidden; }
+            #print-area, #print-area * { visibility: visible; height: auto; overflow: visible; }
             #print-area { 
-                display: block; 
-                position: absolute; 
-                left: 0; 
-                top: 0; 
-                width: 100%; 
+                display: block; position: absolute; left: 0; top: 0; width: 100%; margin: 0; padding: 0;
             }
-            @page { size: 21cm 9cm portrait; margin: 0; }
+            @page { size: 21cm 9cm; margin: 0; }
         }
 
-        .receipt-preview {
-            width: 21cm;
-            height: 9cm;
-            padding: 3mm;
-            border: 1px dashed #ccc;
-            margin: 0 auto;
+        /* KWITANSI VISUAL LAYOUT */
+        .receipt-layout {
+            width: 21cm; height: 9cm;
+            padding: 4mm;
             background: white;
-            font-family: 'Arial Narrow', Arial, sans-serif;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            overflow: hidden;
-            display: flex;         
-            flex-direction: column; 
+            display: flex; flex-direction: column;
+            font-family: 'Arial Narrow', 'Helvetica Condensed', Arial, sans-serif;
             box-sizing: border-box;
-            gap: 2px;
+            border: 1px dashed #ccc; /* Hanya untuk preview di layar */
         }
-
-        /* Receipt Internal Layout */
-        .col-top { flex: 0 0 auto; border-bottom: 2px double black; padding-bottom: 2px; margin-bottom: 2px; }
-        .kop-container { text-align: center; margin-bottom: 4px; }
-        .kop-row { display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .kop-logo { width: 40px; height: auto; flex-shrink: 0; }
-        .kop-logo img { width: 100%; display: block; }
-        .kop-text { text-align: center; }
-        .kop-text h2 { font-size: 9pt; font-weight: 900; text-transform: uppercase; margin: 0; line-height: 1.1; color: #000; }
-        .kop-text h3 { font-size: 7.5pt; font-weight: 700; text-transform: uppercase; margin: 0; line-height: 1.1; color: #000; }
-        .kw-title-row { text-align: center; margin-top: 2px; }
-        .kw-title { font-size: 10pt; font-weight: bold; text-decoration: underline; text-transform: uppercase; }
-        .kw-no { font-size: 7.5pt; font-weight: 600; margin-top: 1px; }
-
-        .col-mid { flex: 1; display: flex; flex-direction: row; gap: 6px; overflow: hidden; min-height: 0; }
         
-        .mid-left { flex: 2; display: flex; flex-direction: column; gap: 1px; font-size: 7.5pt; }
-        .data-row { display: flex; gap: 4px; margin-bottom: 1px; align-items: baseline; }
-        .data-label { width: 80px; flex-shrink: 0; font-weight: 700; font-size: 7.5pt; }
-        .data-value { flex-grow: 1; border-bottom: 1px dotted #999; min-height: 11px; font-family: 'Arial', sans-serif; font-weight: 600; }
+        .receipt-kop { border-bottom: 2px double black; padding-bottom: 2px; margin-bottom: 2px; text-align: center; }
+        .kop-row { display: flex; justify-content: center; align-items: center; gap: 15px; margin-bottom: 4px; }
+        .kop-logo img { height: 35px; }
+        .kop-text h2 { font-size: 10pt; font-weight: 900; text-transform: uppercase; margin: 0; line-height: 1.2; letter-spacing: 1px; }
+        .kop-text h3 { font-size: 8pt; font-weight: 700; text-transform: uppercase; margin: 0; }
+        .receipt-title { text-align: center; margin-top: 5px; }
+        .receipt-title h1 { font-size: 12pt; font-weight: bold; text-decoration: underline; margin: 0; text-transform: uppercase; }
+        .receipt-no { font-size: 8pt; font-weight: 600; }
+
+        .receipt-body { display: flex; flex: 1; gap: 5px; margin-top: 5px; }
+        .receipt-left { flex: 2; display: flex; flex-direction: column; justify-content: space-between; font-size: 8pt; }
+        .receipt-right { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 5px; padding-left: 5px; border-left: 1px solid #eee; }
         
-        .compact-table { width: 100%; border-collapse: collapse; font-size: 7pt; margin-top: 1px; }
-        .compact-table th, .compact-table td { border: 1px solid black; padding: 0px 2px; text-align: center; }
-        .compact-table td:first-child { text-align: left; font-weight: 600; }
-        .compact-table td:nth-last-child(2), .compact-table td:last-child { text-align: right; }
-        .compact-table th { background: #eee; font-size: 6.5pt; padding: 1px 2px; }
+        .data-row { display: flex; margin-bottom: 2px; }
+        .data-label { width: 90px; flex-shrink: 0; font-weight: bold; }
+        .data-value { flex-grow: 1; border-bottom: 1px dotted #999; }
         
-        .terbilang-box { font-style: italic; font-size: 6.5pt; background: #fffbeb; padding: 2px; border: 1px solid #fcd34d; margin-top: 2px; color: #92400e; line-height: 1.1; }
-
-        .mid-right { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 6px; padding-left: 4px; }
-        .total-box { border: 1px solid black; padding: 4px; text-align: right; background: #fff; }
-        .total-label { font-size: 7pt; font-weight: 700; display: block; text-transform: uppercase; }
-        .total-amount { font-size: 10pt; font-weight: 900; color: #000; }
-        .highlight-total { border: 2px solid black; background-color: #fff7ed; }
-        .highlight-total .total-label, .highlight-total .total-amount { font-size: 11pt !important; color: #000; }
-
-        .col-bottom { 
-            flex: 0 0 auto; 
-            display: flex; 
-            justify-content: space-between; 
-            margin-top: 0; 
-            padding-top: 4px; 
-            font-size: 7.5pt; 
-        }
-        .sig-col { text-align: center; width: 45%; }
-        .sig-date { margin-bottom: 1px; font-size: 7pt; }
-        .sig-title { margin-bottom: 1px; font-weight: bold; text-decoration: underline; font-size: 7.5pt; }
-        .sig-space { height: 25px; }
-        .sig-name { text-decoration: underline; font-weight: 900; display: block; margin-top: 1px; font-size: 8.5pt; line-height: 1.1; }
-        .sig-nip { font-size: 6.5pt; margin-top: 1px; }
-
-        /* BLOCKING MODAL (Error Config) */
-        .blocking-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(220, 38, 38, 0.95); z-index: 9999; display: none; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 2rem; }
-        .blocking-content { background: white; padding: 2.5rem; border-radius: 12px; max-width: 600px; width: 100%; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); text-align: left; }
-        .error-icon { font-size: 3rem; color: #ef4444; margin-bottom: 1rem; display: block; text-align: center; }
+        .receipt-table { width: 100%; border-collapse: collapse; font-size: 7pt; margin-top: 5px; }
+        .receipt-table th, .receipt-table td { border: 1px solid black; padding: 2px 4px; text-align: center; }
+        .receipt-table td:first-child { text-align: left; }
+        .receipt-table td:last-child { text-align: right; font-weight: bold; }
+        .receipt-table th { background: #f0f0f0; }
         
-        /* Filter Box */
-        .filter-container { background: #eff6ff; padding: 1rem; border-radius: 8px; border: 1px solid #bfdbfe; margin-bottom: 1.5rem; }
-        .filter-row { display: flex; gap: 1rem; flex-wrap: wrap; align-items: flex-end; }
-        .filter-item { flex: 1; min-width: 180px; }
-        .summary-box { display: flex; gap: 2rem; margin-top: 1rem; flex-wrap: wrap; }
-        .summary-item { background: white; padding: 1rem; border-radius: 8px; flex: 1; min-width: 200px; border: 1px solid #e5e7eb; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
-        .summary-val { font-size: 1.5rem; font-weight: 800; color: var(--primary-color); }
-        .summary-title { font-size: 0.8rem; color: #6b7280; text-transform: uppercase; font-weight: 600; }
+        .terbilang { font-style: italic; font-size: 7pt; background: #fffde7; padding: 4px; border: 1px solid #eee; margin-top: 4px; }
 
-        /* Search Input Style */
-        .search-wrapper {
-            position: relative;
-            flex-grow: 1;
-            max-width: 400px;
+        .total-box { border: 1px solid black; padding: 5px; text-align: right; background: #fafafa; }
+        .total-label { font-size: 8pt; display: block; font-weight: bold; }
+        .total-val { font-size: 11pt; font-weight: 900; }
+        .highlight-box { border: 2px solid black; background: #fffbe6; }
+
+        .receipt-footer { display: flex; justify-content: space-between; margin-top: 5px; font-size: 8pt; text-align: center; }
+        .sig-col { width: 45%; }
+        .sig-space { height: 30px; }
+        .sig-name { text-decoration: underline; font-weight: bold; display: block; }
+        .sig-nip { font-size: 7pt; }
+
+        /* BLOCKING MODAL */
+        .blocking-modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(220, 38, 38, 0.95); z-index: 9999;
+            display: none; flex-direction: column; justify-content: center; align-items: center;
+            text-align: center;
         }
-        .search-wrapper input {
-            width: 100%;
-            padding: 0.6rem 1rem 0.6rem 2.5rem;
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            font-size: 0.9rem;
+        .blocking-content {
+            background: white; padding: 2.5rem; border-radius: 12px; max-width: 600px;
+            border: 4px solid white; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #9ca3af;
-            font-size: 1rem;
-        }
+        .code-block { background: #1f2937; color: #10b981; padding: 1rem; border-radius: 6px; text-align: left; font-family: monospace; font-size: 0.85rem; margin: 1rem 0; overflow-x: auto; }
     </style>
 </head>
 <body>
 
     <!-- SIDEBAR -->
     <aside>
-        <h1>KORPRI<br>BANGKALAN</h1>
-        <p class="subtitle">Sistem Kwitansi Digital</p>
+        <div class="brand">
+            KORPRI
+            <small>Bangkalan</small>
+        </div>
         <nav>
             <button id="nav-dashboard" onclick="switchTab('dashboard')">📊 Dashboard</button>
             <button id="nav-entry" class="active" onclick="switchTab('entry')">📝 Entri Transaksi</button>
             <button id="nav-report" onclick="switchTab('report')">📋 Laporan Data</button>
         </nav>
-        <div style="margin-top: auto; font-size: 0.75rem; color: #9ca3af; text-align: center;">
-            v1.3.0 (Duplicate Check) &copy; 2023
-        </div>
     </aside>
 
     <!-- MAIN CONTENT -->
@@ -266,60 +273,180 @@
         <!-- Loading Spinner -->
         <div id="loading" class="loading-overlay">
             <div class="spinner"></div>
-            <p style="font-weight: 600; color: var(--text-color);">Sedang Memproses...</p>
+            <p style="font-weight: 600; color: #555;">Memproses Data...</p>
         </div>
 
-        <!-- 1. DASHBOARD SECTION -->
+        <!-- DASHBOARD SECTION -->
         <section id="section-dashboard" class="section">
             <div class="card">
-                <h2>Ringkasan Dashboard</h2>
-                
-                <!-- Statistik Petugas -->
-                <h3 style="margin-bottom: 1rem; font-size: 1rem; color: var(--primary-color);">👥 Performa Petugas</h3>
-                <div class="stats-grid" id="petugasStatsGrid">
-                    <!-- Javascript will populate this -->
-                    <div class="stat-card"><div class="stat-label">Memuat Data...</div></div>
+                <div class="card-header">
+                    <h2>Dashboard Statistik</h2>
                 </div>
-            </div>
+                
+                <!-- Stats Cards -->
+                <div class="stats-grid" id="statsGrid">
+                    <!-- Diisi via JS -->
+                </div>
 
-            <div class="card">
-                <h2>🔍 Filter & Ringkasan Setoran</h2>
+                <!-- Filter Summary -->
+                <h3 style="margin: 1.5rem 0 1rem; font-size: 1rem; color: var(--primary-color);">Ringkasan Setoran (Nominal 50%)</h3>
                 <div class="filter-container">
-                    <div class="filter-row">
-                        <div class="filter-item">
-                            <label style="font-size:0.85rem; font-weight:600; margin-bottom:4px; display:block;">Bulan</label>
-                            <select id="filterBulan" class="form-control" onchange="filterSummary()">
-                                <option value="Semua">Semua Bulan</option>
-                            </select>
-                        </div>
-                        <div class="filter-item">
-                            <label style="font-size:0.85rem; font-weight:600; margin-bottom:4px; display:block;">Tahun</label>
-                            <select id="filterTahun" class="form-control" onchange="filterSummary()">
-                                <option value="Semua">Semua Tahun</option>
-                            </select>
-                        </div>
-                        <div class="filter-item">
-                            <label style="font-size:0.85rem; font-weight:600; margin-bottom:4px; display:block;">Petugas</label>
-                            <select id="filterPetugas" class="form-control" onchange="filterSummary()">
-                                <option value="Semua">Semua Petugas</option>
-                            </select>
-                        </div>
+                    <div class="filter-item">
+                        <label>Bulan</label>
+                        <select id="filterBulan" class="form-control" onchange="renderDashboardSummary()">
+                            <option value="all">Semua Bulan</option>
+                        </select>
                     </div>
+                    <div class="filter-item">
+                        <label>Tahun</label>
+                        <select id="filterTahun" class="form-control" onchange="renderDashboardSummary()">
+                            <option value="all">Semua Tahun</option>
+                        </select>
+                    </div>
+                    <div class="filter-item">
+                        <label>Petugas</label>
+                        <select id="filterPetugas" class="form-control" onchange="renderDashboardSummary()">
+                            <option value="all">Semua Petugas</option>
+                        </select>
+                    </div>
+                </div>
 
-                    <div class="summary-box">
+                <div id="summaryResultBox">
+                    <div class="summary-result-box">
                         <div class="summary-item">
                             <div class="summary-title">Jumlah Transaksi</div>
-                            <div class="summary-val" id="summaryCount">0</div>
+                            <div class="summary-val" id="sumCount">0</div>
                         </div>
                         <div class="summary-item">
-                            <div class="summary-title">Total Setoran (50%)</div>
-                            <div class="summary-val" id="summaryTotal">Rp 0</div>
+                            <div class="summary-title">Total Uang (50%)</div>
+                            <div class="summary-val" id="sumTotal">Rp 0</div>
                         </div>
                     </div>
                 </div>
+            </div>
+        </section>
 
-                <h4 style="margin-bottom:0.5rem; font-size:0.9rem; color:#4b5563;">Detail Transaksi Terfilter:</h4>
-                <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px;">
+        <!-- ENTRY SECTION -->
+        <section id="section-entry" class="section active">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Form Transaksi Baru</h2>
+                </div>
+                <form id="transactionForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>No. Kwitansi (Otomatis)</label>
+                            <input type="text" id="receiptNo" readonly placeholder="Mengambil nomor urut...">
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Cetak</label>
+                            <input type="date" id="printDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Nama Penyetor</label>
+                            <input type="text" id="depositorName" placeholder="Nama Lengkap" required>
+                        </div>
+                        <div class="form-group">
+                            <label>Asal OPD / Instansi</label>
+                            <input type="text" id="opdName" placeholder="Nama Dinas/Instansi" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Petugas Penerima</label>
+                            <select id="receiverName" required>
+                                <!-- Diisi via JS -->
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Tanggal Setor</label>
+                            <input type="date" id="depositDate" required>
+                        </div>
+                    </div>
+
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Periode Setoran</label>
+                            <div class="input-group">
+                                <select id="periodeBulan" required></select>
+                                <select id="periodeTahun" required></select>
+                            </div>
+                        </div>
+                    </div>
+
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: var(--text-color);">Rincian Iuran</h3>
+                    <table class="golongan-table">
+                        <thead>
+                            <tr>
+                                <th>Golongan</th>
+                                <th>Nominal Dasar</th>
+                                <th>Jumlah Anggota</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Golongan I</td>
+                                <td><div class="fixed-nominal">Rp 2.000</div></td>
+                                <td><input type="number" id="qtyG1" min="0" value="0" oninput="calculateTotal()"></td>
+                                <td id="subG1" class="text-right">Rp 0</td>
+                            </tr>
+                            <tr>
+                                <td>Golongan II</td>
+                                <td><div class="fixed-nominal">Rp 5.000</div></td>
+                                <td><input type="number" id="qtyG2" min="0" value="0" oninput="calculateTotal()"></td>
+                                <td id="subG2" class="text-right">Rp 0</td>
+                            </tr>
+                            <tr>
+                                <td>Golongan III</td>
+                                <td><div class="fixed-nominal">Rp 7.000</div></td>
+                                <td><input type="number" id="qtyG3" min="0" value="0" oninput="calculateTotal()"></td>
+                                <td id="subG3" class="text-right">Rp 0</td>
+                            </tr>
+                            <tr>
+                                <td>Golongan IV</td>
+                                <td><div class="fixed-nominal">Rp 10.000</div></td>
+                                <td><input type="number" id="qtyG4" min="0" value="0" oninput="calculateTotal()"></td>
+                                <td id="subG4" class="text-right">Rp 0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div style="background: #ecfdf5; padding: 1.5rem; border-radius: 8px; border: 1px solid #a7f3d0; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
+                        <div>
+                            <div style="font-size: 0.9rem; color: #047857;">Total Iuran 100%</div>
+                            <div id="displayTotal100" style="font-size: 1.4rem; font-weight: bold;">Rp 0</div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 0.9rem; color: #047857;">Disetor (50%)</div>
+                            <div id="displayTotal50" style="font-size: 1.8rem; font-weight: 800; color: var(--primary-color);">Rp 0</div>
+                        </div>
+                    </div>
+
+                    <div style="text-align: right; display: flex; justify-content: flex-end; gap: 1rem;">
+                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
+                        <button type="submit" class="btn btn-primary">Simpan & Cetak</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- REPORT SECTION -->
+        <section id="section-report" class="section">
+            <div class="card">
+                <div class="card-header">
+                    <h2>Laporan Data Transaksi</h2>
+                    <div style="display: flex; gap: 10px;">
+                         <input type="text" id="searchInput" placeholder="Cari nama/No. Kwitansi..." style="padding: 0.5rem; border: 1px solid #ddd; border-radius: 4px;" onkeyup="renderReportTable()">
+                         <button class="btn btn-secondary btn-sm" onclick="fetchData()">🔄 Refresh Data</button>
+                    </div>
+                </div>
+                
+                <div class="table-container">
                     <table class="data-table">
                         <thead>
                             <tr>
@@ -327,708 +454,497 @@
                                 <th>Tanggal</th>
                                 <th>Penyetor</th>
                                 <th>OPD</th>
+                                <th>Periode</th>
                                 <th>Petugas</th>
-                                <th style="text-align:right;">Nominal</th>
+                                <th class="text-right">Total (50%)</th>
+                                <th>Aksi</th>
                             </tr>
                         </thead>
-                        <tbody id="filteredTableBody"></tbody>
-                    </table>
-                </div>
-                <div id="emptyFilterState" style="text-align: center; padding: 1.5rem; color: #9ca3af; font-style: italic; display: none;">Tidak ada data sesuai filter.</div>
-            </div>
-
-            <div class="card">
-                <h2>📅 Rekap Bulanan</h2>
-                <div style="overflow-x: auto;">
-                    <table class="data-table">
-                        <thead><tr><th>Bulan</th><th>Tahun</th><th style="text-align:center;">Jumlah Transaksi</th></tr></thead>
-                        <tbody id="monthlyStatsTableBody"></tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- 2. ENTRY SECTION -->
-        <section id="section-entry" class="section active">
-            <div class="card">
-                <h2>Form Transaksi Baru</h2>
-                <form id="transactionForm">
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>No. Kwitansi (Otomatis)</label>
-                            <input type="text" id="receiptNo" readonly placeholder="Fetching...">
-                        </div>
-                        <div class="form-group">
-                            <label>Tanggal Cetak</label>
-                            <input type="date" id="printDate" required>
-                        </div>
-                    </div>
-                    <div class="form-grid">
-                        <!-- NAMA PENYETOR DENGAN FITUR CEK DUPLIKAT -->
-                        <div class="form-group">
-                            <label>Nama Penyetor</label>
-                            <input type="text" id="depositorName" placeholder="Nama Lengkap" required onblur="checkDuplicateDepositor()">
-                            <!-- Area Peringatan Duplikat -->
-                            <div id="duplicateWarning" class="duplicate-warning"></div>
-                        </div>
-                        
-                        <div class="form-group"><label>Nama OPD</label><input type="text" id="opdName" placeholder="Instansi/OPD" required></div>
-                        <div class="form-group"><label>Tanggal Setor</label><input type="date" id="depositDate" required></div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label>Petugas Penerima</label>
-                        <select id="receiverName" required>
-                            <option value="" disabled selected>-- Pilih Petugas --</option>
-                            <option value="Dewi Aniza, SE.MM">Dewi Aniza, SE.MM</option>
-                            <option value="Dita Ayuningtyas P, SE">Dita Ayuningtyas P, SE</option>
-                            <option value="Rusdi Mardiyanto, SH">Rusdi Mardiyanto, SH</option>
-                            <option value="Samsuri, SE">Samsuri, SE</option>
-                        </select>
-                    </div>
-
-                    <div class="form-grid">
-                        <div class="form-group">
-                            <label>Periode Setoran</label>
-                            <div class="input-group">
-                                <select id="periodeBulan" required onchange="checkDuplicateDepositor()"></select>
-                                <select id="periodeTahun" required onchange="checkDuplicateDepositor()"></select>
-                            </div>
-                        </div>
-                    </div>
-
-                    <h3 style="margin: 1.5rem 0 1rem; font-size: 1rem; color: var(--text-color);">Rincian Nominal</h3>
-                    <table class="golongan-table">
-                        <thead><tr><th>Golongan</th><th>Harga Satuan</th><th style="width:100px;">Jumlah</th><th style="width:120px; text-align:right;">Subtotal</th></tr></thead>
-                        <tbody>
-                            <tr><td>Gol 1</td><td><div class="fixed-nominal">Rp 2.000</div></td><td><input type="number" id="qtyG1" min="0" value="0" oninput="calculateTotal()"></td><td id="subG1" style="text-align: right;">Rp 0</td></tr>
-                            <tr><td>Gol 2</td><td><div class="fixed-nominal">Rp 5.000</div></td><td><input type="number" id="qtyG2" min="0" value="0" oninput="calculateTotal()"></td><td id="subG2" style="text-align: right;">Rp 0</td></tr>
-                            <tr><td>Gol 3</td><td><div class="fixed-nominal">Rp 7.000</div></td><td><input type="number" id="qtyG3" min="0" value="0" oninput="calculateTotal()"></td><td id="subG3" style="text-align: right;">Rp 0</td></tr>
-                            <tr><td>Gol 4</td><td><div class="fixed-nominal">Rp 10.000</div></td><td><input type="number" id="qtyG4" min="0" value="0" oninput="calculateTotal()"></td><td id="subG4" style="text-align: right;">Rp 0</td></tr>
+                        <tbody id="reportTableBody">
+                            <!-- Data rows here -->
                         </tbody>
                     </table>
-                    
-                    <div style="display: flex; justify-content: space-between; align-items: center; background: #ecfdf5; padding: 1.2rem; border: 1px solid #a7f3d0; border-radius: 8px; margin-bottom: 2rem;">
-                        <div>
-                            <div style="font-size: 0.85rem; color: #065f46; font-weight: 600;">TOTAL TRANSAKSI</div>
-                            <div style="font-size: 1.5rem; font-weight: 800; color: #065f46;" id="displayTotalBayar">Rp 0</div>
-                        </div>
-                        <div style="text-align: right; border-left: 2px solid #a7f3d0; padding-left: 2rem;">
-                            <div style="font-size: 0.85rem; color: var(--primary-color); font-weight: 600;">SETORAN 50%</div>
-                            <div style="font-size: 1.5rem; font-weight: 800; color: var(--primary-color);" id="displayBayar50">Rp 0</div>
-                        </div>
-                    </div>
-
-                    <div class="form-group" style="grid-column: 1 / -1;">
-                            <label>Catatan / Keterangan</label>
-                            <textarea id="catatan" rows="2" placeholder="Contoh: Setoran Bulanan..."></textarea>
-                        </div>
-
-                    <div style="text-align: right; border-top: 1px solid var(--border-color); padding-top: 1.5rem;">
-                        <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset Form</button>
-                        <button type="submit" class="btn btn-primary">💾 Simpan & Cetak</button>
-                    </div>
-                </form>
-            </div>
-        </section>
-
-        <!-- 3. REPORT SECTION -->
-        <section id="section-report" class="section">
-            <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem; flex-wrap: wrap; gap: 1rem;">
-                    <h2>Laporan Data Transaksi</h2>
-                    <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap; width: 100%; max-width: 600px; justify-content: flex-end;">
-                        <!-- FITUR PENCARIAN -->
-                        <div class="search-wrapper">
-                            <span class="search-icon">🔍</span>
-                            <input type="text" id="searchReport" placeholder="Cari Nama / No Kwitansi / OPD..." onkeyup="renderReport()">
-                        </div>
-                        <button class="btn btn-secondary btn-sm" onclick="fetchDataFromSheet()">🔄 Refresh</button>
-                    </div>
                 </div>
-                
-                <div style="overflow-x: auto; border: 1px solid var(--border-color); border-radius: 8px;">
-                    <table class="data-table">
-                        <thead><tr><th>No Kwitansi</th><th>Tgl Cetak</th><th>Penyetor</th><th>OPD</th><th>Periode</th><th>Petugas</th><th style="text-align:right;">Total</th><th style="text-align:right;">50%</th><th>Aksi</th></tr></thead>
-                        <tbody id="reportTableBody"></tbody>
-                    </table>
-                </div>
-                <div id="emptyState" style="text-align: center; padding: 3rem; color: #9ca3af; display: none;">
-                    <div style="font-size: 3rem; margin-bottom: 1rem;">📭</div>
-                    <p>Belum ada data transaksi.</p>
-                </div>
-                <div id="noResultState" style="text-align: center; padding: 2rem; color: #ef4444; display: none;">
-                    <p>Data tidak ditemukan dengan kata kunci tersebut.</p>
-                </div>
+                <div id="emptyReportMsg" style="padding: 2rem; text-align: center; color: #888;">Belum ada data. Silakan entri transaksi baru.</div>
             </div>
         </section>
     </main>
 
-    <!-- MODAL PREVIEW KWITANSI -->
+    <!-- MODAL PRINT PREVIEW -->
     <div class="modal-overlay" id="printModal">
         <div class="modal-content">
-            <span class="close-modal" onclick="closePrintModal()">&times;</span>
-            <h2 style="margin-bottom: 0.5rem; text-align: center; color: var(--secondary-color);">Pratinjau Cetak (21x9 cm)</h2>
-            <p style="text-align: center; font-size: 0.9rem; color: #6b7280; margin-bottom: 1.5rem;">Pastikan pengaturan printer menggunakan kertas ukuran 21cm x 9cm.</p>
+            <span class="close-modal" onclick="closeModal()">&times;</span>
+            <h2 style="text-align: center; margin-bottom: 1rem;">Preview Cetak (21x9 cm)</h2>
             
-            <div class="receipt-preview" id="a6PreviewContent">
-                <!-- Javascript renders receipt here -->
+            <div id="previewContainer" style="overflow: auto; max-height: 60vh; background: #525659; padding: 20px; display: flex; justify-content: center;">
+                <!-- Kwitansi Preview akan dirender di sini oleh JS -->
             </div>
-            
+
             <div class="modal-actions">
-                <button class="btn btn-secondary" onclick="closePrintModal()">Tutup</button>
+                <button class="btn btn-secondary" onclick="closeModal()">Tutup</button>
                 <button class="btn btn-primary" onclick="window.print()">🖨️ Cetak Sekarang</button>
             </div>
         </div>
     </div>
 
-    <!-- AREA KHUSUS PRINT (HIDDEN DI LAYAR, MUNCUL SAAT DIPRINT) -->
-    <div id="print-area">
-        <div class="receipt-preview" style="border: none; margin: 0; box-shadow: none;">
-            <div id="printContentTarget"></div>
-        </div>
-    </div>
+    <!-- AREA KHUSUS PRINT -->
+    <div id="print-area"></div>
 
-    <!-- MODAL ERROR (Jika URL Script Salah) -->
-    <div id="blockingModal" class="blocking-modal">
+    <!-- TOAST -->
+    <div id="toast" class="toast">Pesan Notifikasi</div>
+
+    <!-- MODAL KONFIGURASI URL -->
+    <div id="configModal" class="blocking-modal">
         <div class="blocking-content">
-            <span class="error-icon">⚠️</span>
-            <h2 style="color:#b91c1c; margin-bottom:1rem; text-align: center;">Error Konfigurasi Kritis</h2>
-            <p style="margin-bottom:1.5rem; line-height: 1.6; color: #4b5563;">
-                Aplikasi tidak dapat berjalan karena <strong>URL Google Script</strong> belum dikonfigurasi dengan benar.
+            <h2 style="color: #b91c1c; font-size: 2rem; margin-bottom: 1rem;">⚠️ Konfigurasi Diperlukan</h2>
+            <p style="line-height: 1.6; color: #374151;">
+                Aplikasi ini membutuhkan <strong>Google Apps Script URL</strong> untuk berfungsi.
+                <br><br>
+                1. Copy kode di bawah ini ke <code>Code.gs</code> di Google Apps Script.<br>
+                2. Deploy sebagai <strong>Web App</strong> (Execute as: Me, Who has access: Anyone).<br>
+                3. Copy <strong>Web App URL</strong> yang muncul.<br>
+                4. Buka file <code>index.html</code> ini di text editor, cari variabel <code>GOOGLE_SCRIPT_URL</code> di bagian bawah, dan tempel URL tersebut.
             </p>
-            <div style="background: #fef3c7; padding: 1rem; border-radius: 6px; font-size: 0.9rem; color: #92400e; margin-bottom: 1.5rem;">
-                <strong>Tindakan Perbaikan:</strong>
-                <ol style="margin-left: 1.2rem; margin-top: 0.5rem;">
-                    <li>Buka file HTML ini di Text Editor (Notepad/VS Code).</li>
-                    <li>Scroll ke bawah sampai menemukan <code>const GOOGLE_SCRIPT_URL = "..."</code>.</li>
-                    <li>Ganti tanda <code>...</code> atau placeholder dengan <strong>Web App URL</strong> dari Google Apps Script Anda.</li>
-                    <li>Simpan file dan refresh halaman.</li>
-                </ol>
+            <div class="code-block">
+function doGet(e) {<br>
+&nbsp;&nbsp;const ss = SpreadsheetApp.getActiveSpreadsheet();<br>
+&nbsp;&nbsp;const sheet = ss.getSheetByName('Data');<br>
+&nbsp;&nbsp;const data = sheet.getDataRange().getValues();<br>
+&nbsp;&nbsp;const headers = data.shift();<br>
+&nbsp;&nbsp;// Mapping headers to keys<br>
+&nbsp;&nbsp;const result = data.map(row => {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;let obj = {};<br>
+&nbsp;&nbsp;&nbsp;&nbsp;headers.forEach((h, i) => obj[h] = row[i]);<br>
+&nbsp;&nbsp;&nbsp;&nbsp;return obj;<br>
+&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);<br>
+}<br><br>
+function doPost(e) {<br>
+&nbsp;&nbsp;const ss = SpreadsheetApp.getActiveSpreadsheet();<br>
+&nbsp;&nbsp;const sheet = ss.getSheetByName('Data');<br>
+&nbsp;&nbsp;const params = JSON.parse(e.postData.contents);<br>
+&nbsp;&nbsp;sheet.appendRow([<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params.receiptNo, params.printDate, params.depositor, params.opd,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params.depositDate, params.receiverName, params.periodeBulan, params.periodeTahun,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;params.totalBayar, params.bayar50, JSON.stringify(params.details)<br>
+&nbsp;&nbsp;]);<br>
+&nbsp;&nbsp;return ContentService.createTextOutput(JSON.stringify({status: 'success'})).setMimeType(ContentService.MimeType.JSON);<br>
+}
             </div>
-            <button onclick="location.reload()" class="btn btn-primary" style="width: 100%;">Coba Lagi</button>
+            <button onclick="location.reload()" class="btn btn-primary" style="width: 100%;">Saya Sudah Mengatur URL</button>
         </div>
-    </div>
-
-    <!-- TOAST NOTIFICATION -->
-    <div id="toast" class="toast">
-        <span id="toast-icon">✅</span>
-        <span id="toast-msg">Pesan notifikasi</span>
     </div>
 
     <script>
-        // ==========================================================
-        // 1. KONFIGURASI URL (PENTING!)
-        // ==========================================================
-        // Ganti URL di bawah ini dengan URL Web App dari Google Apps Script Anda
+        // ============================================
+        // 1. KONFIGURASI (PENTING)
+        // ============================================
+        // GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2dLrH58ZrnlI1dH2fDTOJDhFYQWytg_wbSTvah25q-F429yUXqJce_W-eD1Iv0NEW6A/exec"; 
-        
-        // Cek URL saat load halaman
-        if (!GOOGLE_SCRIPT_URL || GOOGLE_SCRIPT_URL.includes("PASTE") || GOOGLE_SCRIPT_URL.length < 20) {
-            document.getElementById('blockingModal').style.display = 'flex';
-            throw new Error("Konfigurasi URL Script belum dilakukan.");
+
+        // Cek apakah URL sudah diisi
+        if (GOOGLE_SCRIPT_URL === "PASTE_URL_WEB_APP_GOOGLE_SCRIPT_DISINI" || !GOOGLE_SCRIPT_URL) {
+            document.getElementById('configModal').style.display = 'flex';
+            throw new Error("URL Google Script belum dikonfigurasi.");
         }
 
-        // Konstanta Data
+        // ============================================
+        // 2. DATA MASTER
+        // ============================================
         const RATES = { g1: 2000, g2: 5000, g3: 7000, g4: 10000 };
-        const BULAN_NAMA = [
-            "Januari", "Februari", "Maret", "April", "Mei", "Juni", 
-            "Juli", "Agustus", "September", "Oktober", "November", "Desember"
-        ];
-        const PETUGAS_LIST = [
+        const MONTHS = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
+        const OFFICERS = [
             "Dewi Aniza, SE.MM",
             "Dita Ayuningtyas P, SE",
             "Rusdi Mardiyanto, SH",
             "Samsuri, SE"
         ];
 
-        let transactions = []; // Cache data transaksi
+        let globalData = [];
 
-        // Event Listener Init
+        // ============================================
+        // 3. INISIALISASI
+        // ============================================
         document.addEventListener('DOMContentLoaded', () => {
-            try {
-                initDateDropdowns();
-                initFilterDropdowns();
-                const today = new Date();
-                const dateStr = today.toISOString().split('T')[0];
-                document.getElementById('printDate').value = dateStr;
-                document.getElementById('depositDate').value = dateStr;
-                
-                // Default Masuk Entry Tab
-                switchTab('entry'); 
-                fetchLastReceiptNumber(); 
-            } catch (e) {
-                console.error("Init Error", e);
-                showToast("Gagal memuat aplikasi", "error");
-            }
+            initDropdowns();
+            setTodayDates();
+            fetchReceiptNumber(); // Ambil nomor urut terakhir saat load
+            renderDashboardSummary(); // Render dashboard awal
         });
 
-        // --- NAVIGATION ---
-        function switchTab(tab) {
-            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
-            document.getElementById(`section-${tab}`).classList.add('active');
-            document.getElementById(`nav-${tab}`).classList.add('active');
-            
-            if(tab === 'report') fetchDataFromSheet();
-            if(tab === 'dashboard') renderDashboard();
-        }
-
-        function showLoading(show) { 
-            document.getElementById('loading').style.display = show ? 'flex' : 'none'; 
-        }
-
-        // --- INITIALIZATION HELPERS ---
-        function initDateDropdowns() {
-            const monthSelect = document.getElementById('periodeBulan');
-            const yearSelect = document.getElementById('periodeTahun');
-            const currentYear = new Date().getFullYear();
-
-            BULAN_NAMA.forEach((bln, index) => {
-                const option = document.createElement('option');
-                option.value = bln;
-                option.textContent = bln;
-                if(index === new Date().getMonth()) option.selected = true;
-                monthSelect.appendChild(option);
-            });
-
-            for(let i = currentYear - 1; i <= currentYear + 1; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
-                if(i === currentYear) option.selected = true;
-                yearSelect.appendChild(option);
-            }
-        }
-
-        function initFilterDropdowns() {
-            const fMonth = document.getElementById('filterBulan');
-            BULAN_NAMA.forEach(bln => {
-                const opt = document.createElement('option');
-                opt.value = bln;
-                opt.textContent = bln;
-                fMonth.appendChild(opt);
-            });
-
-            const fYear = document.getElementById('filterTahun');
-            const currentYear = new Date().getFullYear();
-            for(let i = currentYear - 2; i <= currentYear; i++) {
-                const opt = document.createElement('option');
-                opt.value = i;
-                opt.textContent = i;
-                if(i === currentYear) opt.selected = true;
-                fYear.appendChild(opt);
-            }
-
-            const fPetugas = document.getElementById('filterPetugas');
-            PETUGAS_LIST.forEach(name => {
+        function initDropdowns() {
+            // Dropdown Petugas
+            const officerSel = document.getElementById('receiverName');
+            OFFICERS.forEach(name => {
                 const opt = document.createElement('option');
                 opt.value = name;
                 opt.textContent = name;
-                fPetugas.appendChild(opt);
+                officerSel.appendChild(opt);
+            });
+
+            // Dropdown Bulan (Entry & Filter)
+            const monthEntries = [document.getElementById('periodeBulan'), document.getElementById('filterBulan')];
+            const currentMonthIdx = new Date().getMonth();
+            
+            monthEntries.forEach(sel => {
+                MONTHS.forEach((m, idx) => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    if (idx === currentMonthIdx) opt.selected = true;
+                    sel.appendChild(opt);
+                });
+                // Tambah opsi "Semua" hanya untuk filter
+                if(sel.id === 'filterBulan') {
+                    const all = document.createElement('option');
+                    all.value = "all";
+                    all.textContent = "Semua Bulan";
+                    sel.insertBefore(all, sel.firstChild);
+                }
+            });
+
+            // Dropdown Tahun (Entry & Filter)
+            const yearEntries = [document.getElementById('periodeTahun'), document.getElementById('filterTahun')];
+            const currentYear = new Date().getFullYear();
+            yearEntries.forEach((sel, idx) => {
+                for(let y = currentYear - 1; y <= currentYear + 1; y++) {
+                    const opt = document.createElement('option');
+                    opt.value = y;
+                    opt.textContent = y;
+                    if(y === currentYear) opt.selected = true;
+                    sel.appendChild(opt);
+                }
+                if(sel.id === 'filterTahun') {
+                    const all = document.createElement('option');
+                    all.value = "all";
+                    all.textContent = "Semua Tahun";
+                    sel.insertBefore(all, sel.firstChild);
+                }
+            });
+
+            // Filter Petugas
+            const petugasFilter = document.getElementById('filterPetugas');
+            const allP = document.createElement('option');
+            allP.value = "all"; allP.textContent = "Semua Petugas";
+            petugasFilter.appendChild(allP);
+            OFFICERS.forEach(name => {
+                const opt = document.createElement('option');
+                opt.value = name; opt.textContent = name;
+                petugasFilter.appendChild(opt);
             });
         }
 
-        // --- CORE LOGIC: CALCULATIONS ---
+        function setTodayDates() {
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('printDate').value = today;
+            document.getElementById('depositDate').value = today;
+        }
+
+        // ============================================
+        // 4. NAVIGASI & UTILS
+        // ============================================
+        function switchTab(tabId) {
+            document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
+            document.getElementById('section-' + tabId).classList.add('active');
+            
+            document.querySelectorAll('nav button').forEach(el => el.classList.remove('active'));
+            document.getElementById('nav-' + tabId).classList.add('active');
+
+            if(tabId === 'dashboard') renderDashboardSummary();
+            if(tabId === 'report') {
+                fetchData();
+                renderReportTable();
+            }
+        }
+
+        function formatRupiah(num) {
+            return "Rp " + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
+        }
+
+        function showToast(msg, type = 'success') {
+            const t = document.getElementById('toast');
+            t.textContent = msg;
+            t.className = `toast show ${type}`;
+            setTimeout(() => t.className = 'toast', 3000);
+        }
+
+        function toRoman(num) {
+            const roman = {M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1};
+            let str = '';
+            for (let i of Object.keys(roman)) {
+                let q = Math.floor(num / roman[i]);
+                num -= q * roman[i];
+                str += i.repeat(q);
+            }
+            return str;
+        }
+
+        function terbilang(nilai) {
+            nilai = Math.abs(nilai);
+            const huruf = ["", "Satu", "Dua", "Tiga", "Empat", "Lima", "Enam", "Tujuh", "Delapan", "Sembilan", "Sepuluh", "Sebelas"];
+            let temp = "";
+            if (nilai < 12) { temp = " " + huruf[nilai]; }
+            else if (nilai < 20) { temp = terbilang(nilai - 10) + " Belas"; }
+            else if (nilai < 100) { temp = terbilang(Math.floor(nilai / 10)) + " Puluh" + terbilang(nilai % 10); }
+            else if (nilai < 200) { temp = " Seratus" + terbilang(nilai - 100); }
+            else if (nilai < 1000) { temp = terbilang(Math.floor(nilai / 100)) + " Ratus" + terbilang(nilai % 100); }
+            else if (nilai < 2000) { temp = " Seribu" + terbilang(nilai - 1000); }
+            else if (nilai < 1000000) { temp = terbilang(Math.floor(nilai / 1000)) + " Ribu" + terbilang(nilai % 1000); }
+            else if (nilai < 1000000000) { temp = terbilang(Math.floor(nilai / 1000000)) + " Juta" + terbilang(nilai % 1000000); }
+            return temp;
+        }
+
+        // ============================================
+        // 5. LOGIKA ENTRI & PERHITUNGAN
+        // ============================================
         function calculateTotal() {
             const q1 = parseInt(document.getElementById('qtyG1').value) || 0;
             const q2 = parseInt(document.getElementById('qtyG2').value) || 0;
             const q3 = parseInt(document.getElementById('qtyG3').value) || 0;
             const q4 = parseInt(document.getElementById('qtyG4').value) || 0;
-            
-            const s1 = q1 * RATES.g1, s2 = q2 * RATES.g2, s3 = q3 * RATES.g3, s4 = q4 * RATES.g4;
-            
+
+            const s1 = q1 * RATES.g1;
+            const s2 = q2 * RATES.g2;
+            const s3 = q3 * RATES.g3;
+            const s4 = q4 * RATES.g4;
+
             document.getElementById('subG1').textContent = formatRupiah(s1);
             document.getElementById('subG2').textContent = formatRupiah(s2);
             document.getElementById('subG3').textContent = formatRupiah(s3);
             document.getElementById('subG4').textContent = formatRupiah(s4);
-            
+
             const total = s1 + s2 + s3 + s4;
-            document.getElementById('displayTotalBayar').textContent = formatRupiah(total);
-            document.getElementById('displayBayar50').textContent = formatRupiah(total / 2);
-            
-            return { total, fiftyPercent: total / 2, q1, q2, q3, q4, s1, s2, s3, s4 };
+            const fifty = total / 2;
+
+            document.getElementById('displayTotal100').textContent = formatRupiah(total);
+            document.getElementById('displayTotal50').textContent = formatRupiah(fifty);
+
+            return { total, fifty, details: {q1, q2, q3, q4, s1, s2, s3, s4} };
         }
 
-        // --- DATA FETCHING & SAVING ---
-        function fetchLastReceiptNumber() {
-            showLoading(true);
-            fetch(GOOGLE_SCRIPT_URL)
-                .then(r => r.json())
-                .then(data => { 
-                    transactions = data; // Update cache
-                    updateReceiptNumberDisplay(transactions); 
-                    showLoading(false);
-                })
-                .catch(err => {
-                    showLoading(false);
-                    console.error("Gagal ambil nomor urut", err);
-                    document.getElementById('receiptNo').value = "GAGAL KONEKSI";
-                    showToast("Gagal koneksi ke Google Sheet", "error");
+        async function fetchReceiptNumber() {
+            // Kita ambil semua data untuk mencari nomor terakhir di bulan ini
+            try {
+                const res = await fetch(GOOGLE_SCRIPT_URL);
+                const data = await res.json();
+                globalData = data; // Simpan cache
+                
+                const now = new Date();
+                const currentMonthIdx = now.getMonth();
+                const currentYear = now.getFullYear();
+                
+                // Filter data bulan ini
+                const monthlyData = data.filter(d => {
+                    const dDate = new Date(d.printDate);
+                    return dDate.getMonth() === currentMonthIdx && dDate.getFullYear() === currentYear;
                 });
-        }
 
-        function fetchDataFromSheet() {
-            showLoading(true);
-            fetch(GOOGLE_SCRIPT_URL).then(r=>r.json()).then(data => {
-                transactions = data;
-                renderReport();
-                showLoading(false);
-            }).catch(e=>{ showToast("Gagal mengambil data", "error"); showLoading(false); });
-        }
-
-        function updateReceiptNumberDisplay(dataList) {
-            const now = new Date();
-            const currentMonthYear = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
-            let lastSeq = 0;
-            
-            if (Array.isArray(dataList) && dataList.length > 0) {
-                // Cari transaksi terakhir di bulan ini
-                const lastTxSameMonth = dataList
-                    .filter(tx => tx.printDate && tx.printDate.startsWith(currentMonthYear))
-                    .sort((a,b) => {
-                        // Extract sequence number safely
-                        const seqA = parseInt(a.receiptNo.split('/')[2]) || 0;
-                        const seqB = parseInt(b.receiptNo.split('/')[2]) || 0;
-                        return seqB - seqA; // Descending
-                    })[0];
-
-                if(lastTxSameMonth) {
-                    const parts = lastTxSameMonth.receiptNo.split('/');
+                let lastSeq = 0;
+                if (monthlyData.length > 0) {
+                    // Cari nomor urut dari receiptNo (format: KORP/BKL/001/I/2023)
+                    // Asumsi format fix. Kita ambil bagian ke-3 setelah split '/'
+                    const lastReceipt = monthlyData[monthlyData.length - 1];
+                    const parts = lastReceipt.receiptNo.split('/');
                     if(parts.length >= 3) {
-                        let seq = parseInt(parts[2]);
-                        if(!isNaN(seq)) lastSeq = seq;
+                        lastSeq = parseInt(parts[2]);
                     }
                 }
-            }
-            const nextSeq = lastSeq + 1;
-            const roman = toRoman(now.getMonth() + 1);
-            document.getElementById('receiptNo').value = `KORP/BKL/${String(nextSeq).padStart(3, '0')}/${roman}/${now.getFullYear()}`;
-        }
 
-        // --- FITUR CEK DUPLIKAT ---
-        function checkDuplicateDepositor() {
-            const inputName = document.getElementById('depositorName').value.trim();
-            const warningDiv = document.getElementById('duplicateWarning');
-            const month = document.getElementById('periodeBulan').value;
-            const year = document.getElementById('periodeTahun').value;
-            const inputField = document.getElementById('depositorName');
+                const nextSeq = lastSeq + 1;
+                const romanMonth = toRoman(currentMonthIdx + 1);
+                const newReceiptNo = `KORP/BKL/${String(nextSeq).padStart(3, '0')}/${romanMonth}/${currentYear}`;
+                
+                document.getElementById('receiptNo').value = newReceiptNo;
 
-            // Reset UI
-            warningDiv.style.display = 'none';
-            inputField.style.borderColor = "";
-
-            if (!inputName || !month || !year) return;
-
-            // Jika data belum dimuat, skip cek
-            if (!transactions || transactions.length === 0) return;
-
-            // Cari duplikat berdasarkan Nama (Case Insensitive) + Periode
-            const duplicate = transactions.find(tx => {
-                return tx.depositor && 
-                       tx.depositor.toLowerCase() === inputName.toLowerCase() &&
-                       tx.periodeBulan === month &&
-                       tx.periodeTahun === year;
-            });
-
-            if (duplicate) {
-                warningDiv.innerHTML = `⚠️ Data <strong>${inputName}</strong> sudah ada di bulan ${month} ${year} (Kw: ${duplicate.receiptNo}).`;
-                warningDiv.style.display = 'block';
-                inputField.style.borderColor = "#ef4444"; // Border merah
+            } catch (error) {
+                console.error("Gagal mengambil nomor urut", error);
+                document.getElementById('receiptNo').value = "ERROR CONNECTION";
             }
         }
 
-        // --- FORM SUBMISSION ---
-        document.getElementById('transactionForm').addEventListener('submit', function(e) {
+        document.getElementById('transactionForm').addEventListener('submit', async (e) => {
             e.preventDefault();
             
-            const calcs = calculateTotal();
-            if (calcs.total === 0) return showToast("Total tidak boleh 0", "error");
-            
-            const receiptNo = document.getElementById('receiptNo').value;
-            
-            if(receiptNo.includes("GAGAL") || !receiptNo) {
-                showToast("Nomor Kwitansi tidak valid. Refresh halaman.", "error");
+            const calc = calculateTotal();
+            if (calc.total === 0) {
+                showToast("Total transaksi tidak boleh 0", "error");
                 return;
             }
 
             const formData = {
-                receiptNo, 
+                receiptNo: document.getElementById('receiptNo').value,
                 printDate: document.getElementById('printDate').value,
                 depositor: document.getElementById('depositorName').value,
                 opd: document.getElementById('opdName').value,
                 depositDate: document.getElementById('depositDate').value,
                 receiverName: document.getElementById('receiverName').value,
-                periodeBulan: document.getElementById('periodeBulan').value, 
-                periodeTahun: document.getElementById('periodeTahun').value, 
-                catatan: document.getElementById('catatan').value,
-                details: calcs, 
-                totalBayar: calcs.total, 
-                bayar50: calcs.fiftyPercent
+                periodeBulan: document.getElementById('periodeBulan').value,
+                periodeTahun: document.getElementById('periodeTahun').value,
+                details: calc.details,
+                totalBayar: calc.total,
+                bayar50: calc.fifty
             };
 
-            showLoading(true);
-            fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(formData) })
-                .then(r=>r.json()).then(res => {
-                    showLoading(false);
-                    if(res.status === 'success') {
-                        showToast("Data berhasil disimpan!", "success");
-                        showPrintPreview(formData);
-                        fetchLastReceiptNumber(); // Update counter
-                        resetForm();
-                    } else { 
-                        showToast("Gagal menyimpan: " + (res.message || "Unknown Error"), "error"); 
-                    }
-                }).catch(err => { 
-                    showLoading(false); 
-                    console.error(err);
-                    showToast("Error jaringan. Cek koneksi.", "error"); 
+            document.getElementById('loading').style.display = 'flex';
+
+            try {
+                const res = await fetch(GOOGLE_SCRIPT_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(formData)
                 });
+                const result = await res.json();
+                
+                document.getElementById('loading').style.display = 'none';
+                
+                if (result.status === 'success') {
+                    showToast("Data berhasil disimpan!");
+                    showPrintPreview(formData);
+                    resetForm();
+                } else {
+                    showToast("Gagal menyimpan data", "error");
+                }
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                showToast("Terjadi kesalahan koneksi", "error");
+            }
         });
 
         function resetForm() {
-            document.getElementById('depositorName').value = '';
-            document.getElementById('opdName').value = '';
-            document.getElementById('receiverName').selectedIndex = 0;
+            document.getElementById('depositorName').value = "";
+            document.getElementById('opdName').value = "";
             ['G1','G2','G3','G4'].forEach(g => document.getElementById('qty'+g).value = 0);
-            const today = new Date().toISOString().split('T')[0];
-            document.getElementById('printDate').value = today;
-            document.getElementById('depositDate').value = today;
-            initDateDropdowns();
-            fetchLastReceiptNumber();
+            setTodayDates();
+            fetchReceiptNumber();
             calculateTotal();
-            
-            // Hapus peringatan duplikat saat reset
-            document.getElementById('duplicateWarning').style.display = 'none';
-            document.getElementById('depositorName').style.borderColor = "";
         }
 
-        // --- DASHBOARD LOGIC ---
-        function renderDashboard() {
-            if(transactions.length === 0) {
-                // Lazy load if empty
-                showLoading(true);
-                fetch(GOOGLE_SCRIPT_URL).then(r=>r.json()).then(data => {
-                    transactions = data;
-                    processDashboardData(data);
-                    showLoading(false);
-                }).catch(e=>{ showToast("Gagal memuat dashboard", "error"); showLoading(false); });
-            } else {
-                processDashboardData(transactions);
+        // ============================================
+        // 6. DASHBOARD & LAPORAN
+        // ============================================
+        async function fetchData() {
+            try {
+                const res = await fetch(GOOGLE_SCRIPT_URL);
+                globalData = await res.json();
+            } catch (e) {
+                showToast("Gagal memuat data laporan", "error");
             }
         }
 
-        function processDashboardData(data) {
-            // 1. Hitung per Petugas
-            const petugasCounts = {};
-            PETUGAS_LIST.forEach(name => petugasCounts[name] = 0);
-            const monthlyCounts = {};
-
-            data.forEach(tx => {
-                if(tx.receiverName && petugasCounts[tx.receiverName] !== undefined) {
-                    petugasCounts[tx.receiverName]++;
-                }
-                if(tx.printDate) {
-                    const key = tx.printDate.split('-').slice(0, 2).join('-');
-                    monthlyCounts[key] = (monthlyCounts[key] || 0) + 1;
-                }
-            });
-
-            // Render Petugas Cards
-            const petugasGrid = document.getElementById('petugasStatsGrid');
-            petugasGrid.innerHTML = '';
-            PETUGAS_LIST.forEach(name => {
-                const count = petugasCounts[name] || 0;
-                const shortName = name.split(',')[0].trim(); 
-                const card = document.createElement('div');
-                card.className = 'stat-card';
-                card.innerHTML = `
-                    <div class="stat-label">Petugas: ${shortName}</div>
-                    <div class="stat-number">${count}</div>
-                    <div class="stat-label">Transaksi</div>
-                `;
-                petugasGrid.appendChild(card);
-            });
-
-            // Render Monthly Table
-            const monthlyBody = document.getElementById('monthlyStatsTableBody');
-            monthlyBody.innerHTML = '';
-            const sortedMonths = Object.keys(monthlyCounts).sort().reverse();
-            if(sortedMonths.length === 0) {
-                monthlyBody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:#999;">Belum ada data</td></tr>';
-            } else {
-                sortedMonths.forEach(key => {
-                    const [year, month] = key.split('-');
-                    const monthName = BULAN_NAMA[parseInt(month) - 1] || month;
-                    const tr = document.createElement('tr');
-                    tr.innerHTML = `<td>${monthName}</td><td>${year}</td><td style="text-align: center; font-weight: bold; color: var(--primary-color);">${monthlyCounts[key]}</td>`;
-                    monthlyBody.appendChild(tr);
-                });
-            }
-
-            // Auto trigger filter
-            filterSummary();
-        }
-
-        function filterSummary() {
-            const fBulan = document.getElementById('filterBulan').value;
-            const fTahun = document.getElementById('filterTahun').value;
+        function renderDashboardSummary() {
+            // Filter setup
+            const fMonth = document.getElementById('filterBulan').value;
+            const fYear = document.getElementById('filterTahun').value;
             const fPetugas = document.getElementById('filterPetugas').value;
 
-            let totalNominal = 0;
-            let count = 0;
-            let filteredData = [];
+            // Stats Cards (Per Petugas)
+            const statsGrid = document.getElementById('statsGrid');
+            statsGrid.innerHTML = '';
+            
+            OFFICERS.forEach(officer => {
+                // Hitung transaksi per officer (Global, tanpa filter tanggal dashboard atau sesuai filter? 
+                // Biasanya dashboard stat officer itu all time atau sesuai filter tanggal. Kita buat sesuai filter).
+                const count = globalData.filter(d => {
+                    const matchPetugas = fPetugas === 'all' || d.receiverName === officer;
+                    const dDate = new Date(d.printDate);
+                    const matchMonth = fMonth === 'all' || MONTHS[dDate.getMonth()] === fMonth;
+                    const matchYear = fYear === 'all' || dDate.getFullYear().toString() === fYear;
+                    return matchPetugas && matchMonth && matchYear;
+                }).length;
 
-            transactions.forEach(tx => {
-                if (fBulan !== "Semua" && String(tx.periodeBulan) !== fBulan) return;
-                if (fTahun !== "Semua" && String(tx.periodeTahun) !== fTahun) return;
-                if (fPetugas !== "Semua" && tx.receiverName !== fPetugas) return;
-
-                totalNominal += tx.bayar50; 
-                count++;
-                filteredData.push(tx);
+                const div = document.createElement('div');
+                div.className = 'stat-card';
+                div.innerHTML = `
+                    <div class="stat-label">${officer.split(',')[0]}</div>
+                    <div class="stat-number">${count}</div>
+                    <div class="stat-label">Transaksi Valid</div>
+                `;
+                statsGrid.appendChild(div);
             });
 
-            document.getElementById('summaryCount').textContent = count;
-            document.getElementById('summaryTotal').textContent = formatRupiah(totalNominal);
-            renderFilteredTable(filteredData);
+            // Summary Box (Total Uang)
+            const filtered = globalData.filter(d => {
+                const dDate = new Date(d.printDate);
+                const mMatch = fMonth === 'all' || MONTHS[dDate.getMonth()] === fMonth;
+                const yMatch = fYear === 'all' || dDate.getFullYear().toString() === fYear;
+                const pMatch = fPetugas === 'all' || d.receiverName === fPetugas;
+                return mMatch && yMatch && pMatch;
+            });
+
+            const totalMoney = filtered.reduce((acc, curr) => acc + curr.bayar50, 0);
+            document.getElementById('sumCount').textContent = filtered.length;
+            document.getElementById('sumTotal').textContent = formatRupiah(totalMoney);
         }
 
-        function renderFilteredTable(data) {
-            const tbody = document.getElementById('filteredTableBody');
-            const emptyState = document.getElementById('emptyFilterState');
+        function renderReportTable() {
+            const search = document.getElementById('searchInput').value.toLowerCase();
+            const tbody = document.getElementById('reportTableBody');
+            const emptyMsg = document.getElementById('emptyReportMsg');
             tbody.innerHTML = '';
 
-            if (data.length === 0) {
-                emptyState.style.display = 'block';
+            const filtered = globalData.filter(d => {
+                const text = (d.receiptNo + d.depositor + d.opd).toLowerCase();
+                return text.includes(search);
+            });
+
+            if (filtered.length === 0) {
+                emptyMsg.style.display = 'block';
             } else {
-                emptyState.style.display = 'none';
-                data.forEach(tx => {
+                emptyMsg.style.display = 'none';
+                // Sort descending date
+                filtered.sort((a, b) => new Date(b.printDate) - new Date(a.printDate));
+                
+                filtered.forEach(d => {
                     const tr = document.createElement('tr');
                     tr.innerHTML = `
-                        <td style="font-weight:600;">${tx.receiptNo}</td>
-                        <td>${formatDate(tx.printDate)}</td>
-                        <td>${tx.depositor}</td>
-                        <td>${tx.opd}</td>
-                        <td>${tx.receiverName}</td>
-                        <td style="text-align: right; font-weight:600;">${formatRupiah(tx.bayar50)}</td>
+                        <td>${d.receiptNo}</td>
+                        <td>${d.printDate}</td>
+                        <td>${d.depositor}</td>
+                        <td>${d.opd}</td>
+                        <td>${d.periodeBulan} ${d.periodeTahun}</td>
+                        <td>${d.receiverName}</td>
+                        <td class="text-right font-bold">${formatRupiah(d.bayar50)}</td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick='reprint(${JSON.stringify(d)})'>🖨 Cetak</button>
+                        </td>
                     `;
                     tbody.appendChild(tr);
                 });
             }
         }
 
-        // --- REPORT LOGIC (UPDATED WITH SEARCH) ---
-        function renderReport() {
-            // Ambil nilai dari input pencarian
-            const searchVal = document.getElementById('searchReport').value.toLowerCase();
-            
-            const tbody = document.getElementById('reportTableBody');
-            const emptyState = document.getElementById('emptyState');
-            const noResultState = document.getElementById('noResultState');
-            
-            tbody.innerHTML = '';
-            
-            // Filter data berdasarkan keyword pencarian
-            const filteredData = transactions.filter(tx => {
-                const matchReceipt = tx.receiptNo && tx.receiptNo.toLowerCase().includes(searchVal);
-                const matchDepositor = tx.depositor && tx.depositor.toLowerCase().includes(searchVal);
-                const matchOpd = tx.opd && tx.opd.toLowerCase().includes(searchVal);
-                
-                return matchReceipt || matchDepositor || matchOpd;
-            });
-
-            if (transactions.length === 0) { 
-                emptyState.style.display = 'block';
-                noResultState.style.display = 'none';
-                return; 
-            } else {
-                emptyState.style.display = 'none';
-            }
-
-            if (filteredData.length === 0 && searchVal !== "") {
-                noResultState.style.display = 'block';
-            } else {
-                noResultState.style.display = 'none';
-            }
-            
-            // Sort descending berdasarkan tanggal
-            const sortedTx = [...filteredData].sort((a,b) => new Date(b.printDate) - new Date(a.printDate));
-
-            sortedTx.forEach(tx => {
-                const tr = document.createElement('tr');
-                const periodeStr = `${tx.periodeBulan || ''} ${tx.periodeTahun || ''}`.trim();
-                tr.innerHTML = `
-                    <td>${tx.receiptNo}</td>
-                    <td>${formatDate(tx.printDate)}</td>
-                    <td>${tx.depositor}</td>
-                    <td>${tx.opd}</td>
-                    <td>${periodeStr}</td>
-                    <td>${tx.receiverName || '-'}</td>
-                    <td style="text-align:right;">${formatRupiah(tx.totalBayar)}</td>
-                    <td style="text-align:right; font-weight:bold;">${formatRupiah(tx.bayar50)}</td>
-                    <td>
-                        <button class="btn btn-primary btn-sm" onclick='reprintTx(${JSON.stringify(tx)})'>🖨 Cetak</button>
-                    </td>`;
-                tbody.appendChild(tr);
-            });
-        }
-
-        // --- PRINTING & PREVIEW ---
-        function showPrintPreview(data) {
-            const html = generateReceiptHTML(data);
-            document.getElementById('a6PreviewContent').innerHTML = html;
-            document.getElementById('printContentTarget').innerHTML = html;
-            document.getElementById('printModal').classList.add('open');
-        }
-
-        window.reprintTx = function(dataObj) { showPrintPreview(dataObj); }
-        function closePrintModal() { document.getElementById('printModal').classList.remove('open'); }
-
+        // ============================================
+        // 7. PRINTING LOGIC
+        // ============================================
         function generateReceiptHTML(data) {
             const d = data.details;
-            // Menggunakan placeholder logo Korpri
-            const logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6f/Logo_Korpri.svg/1200px-Logo_Korpri.svg.png"; 
+            const logoUrl = "https://upload.wikimedia.org/wikipedia/commons/thumb/2/22/Logo_KORPRI.svg/1200px-Logo_KORPRI.svg.png"; // Placeholder Logo Korpri
 
             return `
-                <div class="col-top">
-                    <div class="kop-container">
-                        <div class="kop-row">
-                            <div class="kop-logo">
-                                <img src="${logoUrl}" alt="Logo Korpri">
-                            </div>
-                            <div class="kop-text">
-                                <h2>DEWAN PENGURUS KORPRI</h2>
-                                <h3>KABUPATEN BANGKALAN</h3>
-                            </div>
+            <div class="receipt-layout">
+                <!-- KOP -->
+                <div class="receipt-kop">
+                    <div class="kop-row">
+                        <div class="kop-logo"><img src="${logoUrl}" alt="Logo"></div>
+                        <div class="kop-text">
+                            <h2>Dewan Pengurus KORPRI</h2>
+                            <h3>Kabupaten Bangkalan</h3>
                         </div>
-                    </div>
-                    <div class="kw-title-row">
-                        <div class="kw-title">KWITANSI</div>
-                        <div class="kw-no">No: ${data.receiptNo}</div>
                     </div>
                 </div>
+                <div class="receipt-title">
+                    <h1>KWITANSI</h1>
+                    <div class="receipt-no">No: ${data.receiptNo}</div>
+                </div>
 
-                <div class="col-mid">
-                    <div class="mid-left">
-                        <div class="data-row">
-                            <div class="data-label">Telah terima dari</div>
-                            <div class="data-value">${data.depositor}</div>
-                        </div>
-                        <div class="data-row">
-                            <div class="data-label">Nama OPD</div>
-                            <div class="data-value">${data.opd}</div>
-                        </div>
-                        <div class="data-row">
-                            <div class="data-label">Periode</div>
-                            <div class="data-value">${data.periodeBulan} ${data.periodeTahun}</div>
-                        </div>
-                        <div class="data-row">
-                            <div class="data-label">Tgl. Setor</div>
-                            <div class="data-value">${formatDate(data.depositDate)}</div>
-                        </div>
-
-                        <table class="compact-table">
+                <!-- BODY -->
+                <div class="receipt-body">
+                    <div class="receipt-left">
+                        <div class="data-row"><div class="data-label">Telah terima dari</div><div class="data-value">${data.depositor}</div></div>
+                        <div class="data-row"><div class="data-label">Nama OPD</div><div class="data-value">${data.opd}</div></div>
+                        <div class="data-row"><div class="data-label">Periode</div><div class="data-value">${data.periodeBulan} ${data.periodeTahun}</div></div>
+                        <div class="data-row"><div class="data-label">Tgl. Setor</div><div class="data-value">${data.depositDate}</div></div>
+                        
+                        <table class="receipt-table">
                             <thead><tr><th>Ket</th><th>Jml</th><th>Nom</th><th>Total</th></tr></thead>
                             <tbody>
                                 <tr><td>Gol 1</td><td>${d.q1}</td><td>${RATES.g1}</td><td>${d.s1}</td></tr>
@@ -1037,131 +953,59 @@
                                 <tr><td>Gol 4</td><td>${d.q4}</td><td>${RATES.g4}</td><td>${d.s4}</td></tr>
                             </tbody>
                         </table>
-                        
-                        <div class="terbilang-box">"${terbilang(data.bayar50)} Rupiah"</div>
-                        <div class="receipt-row" style="margin-top: 4px;"><div class="receipt-label">Keterangan</div><div class="receipt-separator">:</div><div class="receipt-value">${item.catatan || '-'}</div></div>
+                        <div class="terbilang">Terbilang: ${terbilang(data.bayar50)} Rupiah</div>
                     </div>
 
-                    <div class="mid-right">
+                    <div class="receipt-right">
                         <div class="total-box">
-                            <span class="total-label">TOTAL BAYAR</span>
-                            <span class="total-amount">${formatRupiah(data.totalBayar)}</span>
+                            <span class="total-label">Total Iuran</span>
+                            <span class="total-val">${formatRupiah(data.totalBayar)}</span>
                         </div>
-                        <div class="total-box highlight-total">
-                            <span class="total-label">SETORAN 50%</span>
-                            <span class="total-amount">${formatRupiah(data.bayar50)}</span>
+                        <div class="total-box highlight-box">
+                            <span class="total-label">Setor 50%</span>
+                            <span class="total-val">${formatRupiah(data.bayar50)}</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="col-bottom">
+                <!-- FOOTER -->
+                <div class="receipt-footer">
                     <div class="sig-col">
-                        <div class="sig-date">${formatDate(data.printDate)}</div>
-                        <div class="sig-title">Penyetor,</div>
+                        <div>${data.printDate}</div>
+                        <div>Penyetor</div>
                         <div class="sig-space"></div>
-                        <span class="sig-name">${data.depositor}</span>
+                        <div class="sig-name">${data.depositor}</div>
                     </div>
                     <div class="sig-col">
-                        <div class="sig-date">${formatDate(data.printDate)}</div>
-                        <div class="sig-title">Penerima,</div>
+                        <div>${data.printDate}</div>
+                        <div>Penerima</div>
                         <div class="sig-space"></div>
-                        <span class="sig-name">${data.receiverName}</span>
-                        <div class="sig-nip">NIP. ............................</div>
+                        <div class="sig-name">${data.receiverName}</div>
+                        <div>NIP. ................................</div>
                     </div>
                 </div>
+            </div>
             `;
         }
 
-        // --- UTILITIES ---
-        function formatRupiah(num) { 
-            return "Rp " + num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, "."); 
-        }
-        function formatDate(str) { 
-            if(!str) return "-"; 
-            const date = new Date(str);
-            return date.toLocaleDateString('id-ID', {day:'numeric', month:'long', year:'numeric'}); 
-        }
-        function showToast(msg, type="success") { 
-            const t=document.getElementById('toast'); 
-            const icon = document.getElementById('toast-icon');
-            const txt = document.getElementById('toast-msg');
+        function showPrintPreview(data) {
+            const htmlContent = generateReceiptHTML(data);
+            // Render ke Modal
+            document.getElementById('previewContainer').innerHTML = htmlContent;
+            // Render ke Area Print (Hidden)
+            document.getElementById('print-area').innerHTML = htmlContent;
             
-            t.className = `toast ${type} show`;
-            icon.textContent = type === 'error' ? '❌' : '✅';
-            txt.textContent = msg;
-            
-            setTimeout(()=>t.classList.remove('show'), 3000); 
+            document.getElementById('printModal').classList.add('open');
         }
-        function toRoman(num) { 
-            const roman={M:1000,CM:900,D:500,CD:400,C:100,XC:90,L:50,XL:40,X:10,IX:9,V:5,IV:4,I:1}; 
-            let str=''; 
-            for(let i of Object.keys(roman)){
-                let q=Math.floor(num/roman[i]);num-=q*roman[i];str+=i.repeat(q);
-            }
-            return str;
+
+        window.reprint = function(data) {
+            showPrintPreview(data);
         }
-        function terbilang(n) { 
-            n=Math.abs(n); 
-            const h=["","Satu","Dua","Tiga","Empat","Lima","Enam","Tujuh","Delapan","Sembilan","Sepuluh","Sebelas"];
-            let t="";
-            if(n<12)t=" "+h[n];
-            else if(n<20)t=terbilang(n-10)+" Belas";
-            else if(n<100)t=terbilang(Math.floor(n/10))+" Puluh"+terbilang(n%10);
-            else if(n<200)t=" Seratus"+terbilang(n-100);
-            else if(n<1000)t=terbilang(Math.floor(n/100))+" Ratus"+terbilang(n%100);
-            else if(n<2000)t=" Seribu"+terbilang(n-1000);
-            else if(n<1000000)t=terbilang(Math.floor(n/1000))+" Ribu"+terbilang(n%1000);
-            else if(n<1000000000)t=terbilang(Math.floor(n/1000000))+" Juta"+terbilang(n%1000000);
-            return t;
+
+        function closeModal() {
+            document.getElementById('printModal').classList.remove('open');
         }
+
     </script>
 </body>
 </html>
-
-<!-- 
-    ============================================
-    PANDUAN BACKEND (GOOGLE APPS SCRIPT)
-    ============================================
-    Salin kode di bawah ini ke file Google Apps Script (Extensions > Apps Script)
-    
-    function doGet(e) {
-      const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Data');
-      const data = sheet.getDataRange().getValues();
-      const headers = data.shift();
-      
-      // Map array ke object
-      const result = data.map(row => {
-        let obj = {};
-        headers.forEach((h, i) => obj[h] = row[i]);
-        return obj;
-      });
-      
-      return ContentService.createTextOutput(JSON.stringify(result)).setMimeType(ContentService.MimeType.JSON);
-    }
-
-    function doPost(e) {
-      const sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName('Data');
-      const params = JSON.parse(e.postData.contents);
-      
-      // Pastikan header ada
-      if(sheet.getLastRow() === 0) {
-        sheet.appendRow(["receiptNo", "printDate", "depositor", "opd", "depositDate", "receiverName", "periodeBulan", "periodeTahun", "totalBayar", "bayar50", "details"]);
-      }
-      
-      sheet.appendRow([
-        params.receiptNo,
-        params.printDate,
-        params.depositor,
-        params.opd,
-        params.depositDate,
-        params.receiverName,
-        params.periodeBulan,
-        params.periodeTahun,
-        params.totalBayar,
-        params.bayar50,
-        JSON.stringify(params.details)
-      ]);
-      
-      return ContentService.createTextOutput(JSON.stringify({status: 'success'})).setMimeType(ContentService.MimeType.JSON);
-    }
--->
