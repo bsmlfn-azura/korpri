@@ -426,6 +426,14 @@
                             <div id="displayTotal50" style="font-size: 1.8rem; font-weight: 800; color: var(--primary-color);">Rp 0</div>
                         </div>
                     </div>
+                    <!-- TAMBAHKAN KODE INI -->
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>Keterangan (Opsional)</label>
+                            <input type="text" id="keterangan" placeholder="Contoh: Lunas Bulan Januari - Maret">
+                        </div>
+                    </div>
+                    <!-- SELESAI TAMBAH KODE -->
 
                     <div style="text-align: right; display: flex; justify-content: flex-end; gap: 1rem;">
                         <button type="button" class="btn btn-secondary" onclick="resetForm()">Reset</button>
@@ -540,7 +548,7 @@ function doPost(e) {<br>
         // 1. KONFIGURASI (PENTING)
         // ============================================
         // GANTI URL DI BAWAH INI DENGAN URL WEB APP GOOGLE SCRIPT ANDA
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx2dLrH58ZrnlI1dH2fDTOJDhFYQWytg_wbSTvah25q-F429yUXqJce_W-eD1Iv0NEW6A/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzUIqSYISFjy_RRAcTVOz355ZTvtO_y_o986sa72LiSUfBKUkRiAJp1PkHn7H60X6_5wA/exec"; 
 
         // Cek apakah URL sudah diisi
         if (GOOGLE_SCRIPT_URL === "PASTE_URL_WEB_APP_GOOGLE_SCRIPT_DISINI" || !GOOGLE_SCRIPT_URL) {
@@ -782,7 +790,8 @@ function doPost(e) {<br>
                 periodeTahun: document.getElementById('periodeTahun').value,
                 details: calc.details,
                 totalBayar: calc.total,
-                bayar50: calc.fifty
+                bayar50: calc.fifty,
+                keterangan: document.getElementById('keterangan').value
             };
 
             document.getElementById('loading').style.display = 'flex';
@@ -954,6 +963,7 @@ function doPost(e) {<br>
                             </tbody>
                         </table>
                         <div class="terbilang">Terbilang: ${terbilang(data.bayar50)} Rupiah</div>
+                        <div class="data-row"><div class="data-label">Ket.</div><div class="data-value">${data.keterangan}</div></div>
                     </div>
 
                     <div class="receipt-right">
